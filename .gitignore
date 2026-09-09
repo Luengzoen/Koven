@@ -1,0 +1,14 @@
+node_modules/
+out/
+dist/
+.data/
+.npm-cache/
+.electron-cache/
+.electron-builder-cache/
+*.tsbuildinfo
+
+# vibe coding
+AGENTS.md
+knowledge-graph.md
+knowledge/
+.cursor/rules/

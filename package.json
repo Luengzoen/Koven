@@ -1,0 +1,50 @@
+{
+  "name": "koven",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Windows-only Electron app with React, Radix, Tailwind, TypeScript, and Zustand.",
+  "main": "./out/main/index.js",
+  "os": ["win32"],
+  "author": {
+    "name": "Koven"
+  },
+  "scripts": {
+    "postinstall": "node scripts/confine.js install",
+    "dev": "node scripts/confine.js dev",
+    "start": "node scripts/confine.js dev",
+    "preview": "node scripts/confine.js preview",
+    "build": "node scripts/confine.js build",
+    "build:unpack": "node scripts/confine.js unpack",
+    "build:win": "node scripts/build-win.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false && node scripts/check-file-budget.mjs",
+    "new:capability": "node scripts/new-capability.mjs"
+  },
+  "dependencies": {
+    "@electron-toolkit/utils": "^4.0.0"
+  },
+  "devDependencies": {
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "electron": "44.2.0",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^5.0.0",
+    "lucide-react": "^0.544.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.5",
+    "zustand": "^5.0.8"
+  }
+}

@@ -1,0 +1,35 @@
+appId: com.koven.app
+productName: Koven
+copyright: Copyright © 2026 Koven
+electronVersion: 44.2.0
+electronDist: node_modules/electron/dist
+electronDownload:
+  mirror: https://npmmirror.com/mirrors/electron/
+directories:
+  output: dist
+  buildResources: build
+extraResources:
+  - from: build/koven.ico
+    to: koven.ico
+files:
+  - out/**
+  - package.json
+asar: true
+npmRebuild: false
+win:
+  icon: build/koven.ico
+  executableName: Koven
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  oneClick: false
+  perMachine: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  include: build/installer.nsh

@@ -17,11 +17,13 @@ function DropdownMenuGroup(props: ComponentProps<typeof DropdownMenuPrimitive.Gr
 function DropdownMenuContent({
   className,
   sideOffset = 8,
+  side = 'bottom',
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Content>) {
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
+        side={side}
         sideOffset={sideOffset}
         className={cn(
           'min-w-40 rounded-lg border border-zinc-800 bg-zinc-900 p-1 shadow-lg outline-none',

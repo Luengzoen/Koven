@@ -2,6 +2,14 @@ import { is } from '@electron-toolkit/utils'
 import { app, BrowserWindow, shell } from 'electron'
 import { join } from 'node:path'
 import { emitMaximizedChanged } from '../capabilities/shell/register'
+import {
+  centeredWindowBounds,
+  defaultWindowBounds,
+  isBoundsOnScreen,
+  tryLoadShellSnapshot,
+  createDefaultShellSnapshot
+} from '../capabilities/shell/snapshot'
+import { bindWindowStatePersistence } from '../capabilities/shell/window-state'
 import { resolveAppIconPath } from './app-icon'
 import { handleCloseRequest, markQuitting } from './tray'
 import { applyTitleBarOverlay } from './title-bar-overlay'
@@ -13,22 +21,40 @@ export type MainWindowOptions = {
   minHeight?: number
 }
 
-const defaults = {
-  width: 960,
-  height: 640,
-  minWidth: 800,
-  minHeight: 520
-} as const
-
 export function createMainWindow(options: MainWindowOptions = {}): BrowserWindow {
-  const width = options.width ?? defaults.width
-  const height = options.height ?? defaults.height
-  const minWidth = options.minWidth ?? defaults.minWidth
-  const minHeight = options.minHeight ?? defaults.minHeight
+  const fromDisk = tryLoadShellSnapshot()
+  const snapshot = fromDisk ?? createDefaultShellSnapshot()
+  const saved = snapshot.window
+  const minWidth = options.minWidth ?? defaultWindowBounds.minWidth
+  const minHeight = options.minHeight ?? defaultWindowBounds.minHeight
+
+  let width = options.width ?? saved.bounds.width
+  let height = options.height ?? saved.bounds.height
+  let x: number | undefined = saved.bounds.x
+  let y: number | undefined = saved.bounds.y
+  let restoreMaximized = false
+
+  const usable =
+    fromDisk !== null &&
+    width >= minWidth &&
+    height >= minHeight &&
+    isBoundsOnScreen({ x: x ?? 0, y: y ?? 0, width, height })
+
+  if (usable) {
+    restoreMaximized = saved.maximized
+  } else {
+    width = options.width ?? defaultWindowBounds.width
+    height = options.height ?? defaultWindowBounds.height
+    const centered = centeredWindowBounds(width, height)
+    x = centered.x
+    y = centered.y
+  }
 
   const mainWindow = new BrowserWindow({
     width,
     height,
+    x,
+    y,
     minWidth,
     minHeight,
     show: false,
@@ -49,6 +75,11 @@ export function createMainWindow(options: MainWindowOptions = {}): BrowserWindow
   })
 
   applyTitleBarOverlay(mainWindow)
+  bindWindowStatePersistence(mainWindow)
+
+  if (restoreMaximized) {
+    mainWindow.maximize()
+  }
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()

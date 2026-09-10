@@ -1,5 +1,5 @@
-import { ShelfPage } from '@renderer/capabilities/shelf/shelf-page'
-import type { ComponentType } from 'react'
+import { PlaceholderPage } from '@renderer/shell/placeholder-page'
+import { createElement, type ComponentType } from 'react'
 
 export type AppPage = {
   id: string
@@ -7,14 +7,38 @@ export type AppPage = {
   Page: ComponentType
 }
 
-export const pages: readonly AppPage[] = [
-  { id: 'shelf', title: 'Koven', Page: ShelfPage }
-]
-
-const firstPage = pages[0]
-
-if (!firstPage) {
-  throw new Error('至少需要注册一个页面')
+function page(id: string, title: string): AppPage {
+  function Page() {
+    return createElement(PlaceholderPage, { title })
+  }
+  Page.displayName = `Page(${id})`
+  return { id, title, Page }
 }
 
-export const homePage = firstPage
+export const overviewPages: readonly AppPage[] = [
+  page('overview:home', '概览'),
+  page('overview:recent', '最近'),
+  page('overview:starred', '收藏')
+]
+
+export const taskPages: readonly AppPage[] = [
+  page('task:demo-1', '整理需求说明'),
+  page('task:demo-2', '核对发布清单'),
+  page('task:demo-3', '回顾上周进度')
+]
+
+export const pages: readonly AppPage[] = [...overviewPages, ...taskPages]
+
+const pageMap = new Map(pages.map((entry) => [entry.id, entry]))
+
+export function getPage(id: string): AppPage | undefined {
+  return pageMap.get(id)
+}
+
+const firstOverview = overviewPages[0]
+
+if (!firstOverview) {
+  throw new Error('至少需要注册一个 Overview 页面')
+}
+
+export const homePage = firstOverview

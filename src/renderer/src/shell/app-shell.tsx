@@ -1,15 +1,26 @@
-import { homePage } from '@renderer/routes'
+import { KeepAliveOutlet } from '@renderer/shell/keep-alive-outlet'
+import { PageTopbar } from '@renderer/shell/page-topbar'
+import { Sidebar } from '@renderer/shell/sidebar/sidebar'
+import { SidebarResizeHandle } from '@renderer/shell/sidebar/sidebar-resize-handle'
 import { TitleBar } from '@renderer/shell/title-bar'
+import { usePersistSession } from '@renderer/shell/use-persist-session'
+import { useState } from 'react'
 
 export function AppShell() {
-  const Page = homePage.Page
+  const [sidebarResizing, setSidebarResizing] = useState(false)
+  usePersistSession()
 
   return (
     <div className="flex h-full min-h-full flex-col">
       <TitleBar />
-      <main className="flex flex-1 items-center justify-center p-6">
-        <Page />
-      </main>
+      <div className="flex min-h-0 flex-1">
+        <Sidebar resizing={sidebarResizing} />
+        <SidebarResizeHandle resizing={sidebarResizing} onResizingChange={setSidebarResizing} />
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-zinc-950">
+          <PageTopbar />
+          <KeepAliveOutlet />
+        </main>
+      </div>
     </div>
   )
 }

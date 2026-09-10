@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { shellIpc, type ShellAPI } from '@shared/capabilities/shell'
+import { shellIpc, type ShellAPI, type ShellUiPatch } from '@shared/capabilities/shell'
 
 export const shellApi: ShellAPI = {
   shell: {
@@ -12,6 +12,8 @@ export const shellApi: ShellAPI = {
       return () => {
         ipcRenderer.removeListener(shellIpc.maximizedChanged, listener)
       }
-    }
+    },
+    getSnapshot: () => ipcRenderer.invoke(shellIpc.getSnapshot),
+    patchUi: (patch: ShellUiPatch) => ipcRenderer.invoke(shellIpc.patchUi, patch)
   }
 }

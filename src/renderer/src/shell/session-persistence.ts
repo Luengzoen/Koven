@@ -3,6 +3,7 @@ import {
   SIDEBAR_WIDTH_MAX,
   SIDEBAR_WIDTH_MIN
 } from '@renderer/shell/shell-layout-store'
+import { applyTheme } from '@renderer/shell/apply-theme'
 import { useNavigationStore } from '@renderer/shell/navigation-store'
 import { usePreferencesStore } from '@renderer/shell/preferences-store'
 import { useShellLayoutStore } from '@renderer/shell/shell-layout-store'
@@ -35,6 +36,7 @@ export async function hydrateSession(): Promise<void> {
 
   if (preferencesResult.ok) {
     usePreferencesStore.getState().hydrate(preferencesResult.value)
+    applyTheme({ preference: preferencesResult.value.theme })
   }
 }
 

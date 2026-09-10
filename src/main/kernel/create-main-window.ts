@@ -61,8 +61,8 @@ export function createMainWindow(options: MainWindowOptions = {}): BrowserWindow
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
     titleBarOverlay: {
-      color: '#18181b',
-      symbolColor: '#fafafa',
+      color: '#f4f4f5',
+      symbolColor: '#18181b',
       height: 30
     },
     ...(app.isPackaged ? {} : { icon: resolveAppIconPath() }),

@@ -13,7 +13,7 @@ const api: AppAPI = { ...appInfoApi, ...shellApi, ...preferencesApi }
 exposeApi(api)
 ```
 
-`api` 的类型是 `AppAPI`（`src/shared/app-api.ts` 的交集组装）。各包方法在 `src/preload/capabilities/<name>/api.ts`。渲染进程通过 `window.koven.shell.getSnapshot()` / `window.koven.preferences.get()` 等命名空间调用。
+`api` 的类型是 `AppAPI`（`src/shared/app-api.ts` 的交集组装）。各包方法在 `src/preload/capabilities/<name>/api.ts`。渲染进程通过 `window.koven.shell.getSnapshot()` / `window.koven.preferences.get()` 等命名空间调用。主题即时同步用 `preferences.applyTheme`（`ipcRenderer.send`，不等待）。
 
 ## 2. 允许 / 禁止
 

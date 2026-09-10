@@ -5,8 +5,10 @@ const overlayColors = {
   light: { color: '#f4f4f5', symbolColor: '#18181b' }
 } as const
 
-export function applyTitleBarOverlay(win: BrowserWindow): void {
-  const palette = nativeTheme.shouldUseDarkColors ? overlayColors.dark : overlayColors.light
+/** @param dark 显式深浅；省略则读 nativeTheme.shouldUseDarkColors */
+export function applyTitleBarOverlay(win: BrowserWindow, dark?: boolean): void {
+  const useDark = dark ?? nativeTheme.shouldUseDarkColors
+  const palette = useDark ? overlayColors.dark : overlayColors.light
   win.setTitleBarOverlay({
     color: palette.color,
     symbolColor: palette.symbolColor,

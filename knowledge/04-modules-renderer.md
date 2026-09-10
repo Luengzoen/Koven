@@ -19,7 +19,11 @@
 | `src/renderer/src/shell/navigation-store.ts` | `activeId` / `sidebarSelectedId` / `openFromSidebar` / `open` |
 | `src/renderer/src/shell/keep-alive-outlet.tsx` | 已访问页保活（隐藏非当前页） |
 | `src/renderer/src/shell/session-persistence.ts` | hydrate + 写回 shell/preferences |
-| `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（落盘已接，产品 UI 未接） |
+| `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（落盘 + UI 已接） |
+| `src/renderer/src/shell/theme-resolve.ts` | `ThemePreference` → 实际 light/dark |
+| `src/renderer/src/shell/apply-theme.ts` | 写 `html.dark`；可选圆形外扩 VT |
+| `src/renderer/src/shell/use-theme-sync.ts` | 订阅偏好与系统配色，无动画同步 |
+| `src/renderer/src/components/ui/theme-segment.tsx` | 三档主题 segment（系统/浅/深） |
 | `src/renderer/src/shell/sidebar/` | Overview / 搜索 / Projects 树 / 底部设置 / 右缘拖宽 |
 | `src/renderer/src/routes.ts` | Overview + 任务占位页注册表 |
 | `src/renderer/src/assets/koven.png` | logo |
@@ -38,6 +42,7 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 | `components/ui/dialog.tsx` | `@radix-ui/react-dialog` |
 | `components/ui/dropdown-menu.tsx` | `@radix-ui/react-dropdown-menu` |
 | `components/ui/separator.tsx` | `@radix-ui/react-separator` |
+| `components/ui/theme-segment.tsx` | 主题三档 segment |
 | `lib/cn.ts` | `clsx` + `tailwind-merge` |
 | `capabilities/app-info/` | 旧演示关于菜单（未挂侧栏） |
 | `capabilities/shelf/` | 旧演示计数页（未挂路由，可删） |
@@ -51,7 +56,7 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 - 启动先 `hydrateSession`（shell 快照 + preferences），再挂 `AppShell`。
 - 默认/恢复：Overview 或上次 `activePageId`；侧栏高亮用 `sidebarSelectedId`（仅常规侧栏入口；对不上则不高亮）。
 - Overview / Projects 任务用 `openFromSidebar`；非侧栏进入用 `open`（清高亮）。
-- 侧栏搜索只读；加号/三点/底部菜单占位。
+- 侧栏搜索只读；加号/三点占位；底部「系统设置」菜单含主题 segment（system/light/dark）。
 - 壳 UI 与偏好防抖写回 `.data/capabilities/shell/snapshot.json` 与 `preferences/preferences.json`。
 - 侧栏收起/展开为宽度过渡（拖宽时关过渡）；收起仍记住 `sidebarWidth`。
 - 仍不上 react-router。

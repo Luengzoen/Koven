@@ -17,8 +17,8 @@ export function Sidebar({ resizing }: SidebarProps) {
     <div
       style={{ width: sidebarOpen ? sidebarWidth : 0 }}
       className={cn(
-        'relative h-full shrink-0 overflow-hidden border-r bg-zinc-950',
-        sidebarOpen ? 'border-zinc-800' : 'border-transparent',
+        'relative h-full shrink-0 overflow-hidden border-r bg-background',
+        sidebarOpen ? 'border-border' : 'border-transparent',
         !resizing && 'transition-[width,border-color] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)]'
       )}
       aria-hidden={!sidebarOpen}

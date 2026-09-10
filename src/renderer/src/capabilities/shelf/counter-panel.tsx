@@ -8,9 +8,9 @@ export function CounterPanel() {
   const reset = useCounterStore((state) => state.reset)
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-950/60 p-4">
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-muted/60 p-4">
       <div className="flex flex-col gap-1">
-        <span className="text-sm text-zinc-400">Zustand 计数</span>
+        <span className="text-sm text-muted-foreground">Zustand 计数</span>
         <strong className="text-3xl font-semibold">{count}</strong>
       </div>
       <div className="flex gap-2">

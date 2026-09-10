@@ -41,13 +41,13 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Content
         className={cn(
-          'fixed top-1/2 left-1/2 w-[min(calc(100%-2rem),420px)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-xl outline-none',
+          'fixed top-1/2 left-1/2 w-[min(calc(100%-2rem),420px)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-5 shadow-xl outline-none',
           className
         )}
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute top-3 right-3 inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100 [&_svg]:size-4">
+        <DialogPrimitive.Close className="absolute top-3 right-3 inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground [&_svg]:size-4">
           <XIcon />
           <span className="sr-only">关闭</span>
         </DialogPrimitive.Close>
@@ -74,7 +74,7 @@ function DialogDescription({
 }: ComponentProps<typeof DialogPrimitive.Description>) {
   return (
     <DialogPrimitive.Description
-      className={cn('mt-2 text-sm leading-6 text-zinc-400', className)}
+      className={cn('mt-2 text-sm leading-6 text-muted-foreground', className)}
       {...props}
     />
   )

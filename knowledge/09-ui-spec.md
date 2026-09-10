@@ -33,7 +33,37 @@
 
 ## 4. 主题
 
-当前演示面是锌色暗色硬编码（`zinc-950` 等）。产品化时再抽语义 token（`background` / `foreground` / `muted`），抽完同步改本分片。未抽之前，新 UI 跟现有 zinc 体系，不要混入另一套蓝灰。
+清爽明暗双主题；界面主体黑白灰。暗色用 `html.dark`（`@custom-variant dark`）。偏好：`system` / `light` / `dark`，落盘见 `06-patterns-state.md`。
+
+### 语义 token（`main.css`）
+
+布局/字色用语义类，**禁止**新 UI 硬编码 `zinc-*` 当底色/字色。
+
+| Token | 用途 |
+|---|---|
+| `background` / `foreground` | 页面底与主字色 |
+| `muted` / `muted-foreground` | 次级底与次级字 |
+| `border` / `card` / `accent` | 边框、卡片、悬停底 |
+| `titlebar` | 自定义标题栏底（对齐 WCO overlay） |
+| `ring` | 焦点环 |
+
+语义色（双主题各有值，极个别场景用）：`primary`（工具蓝）、`success`（绿）、`danger`（红）、`warning`（黄）、`info`（常规信息色）。对应 `*-foreground` 为其上文字色。
+
+切换：侧栏「系统设置」菜单内「主题」+ segment；扩散与 WCO 时机见下方「实现禁区」。首次 hydrate / 跟随系统无动画。
+
+### 实现禁区（改主题动画前必读）
+
+入口：`src/renderer/src/shell/apply-theme.ts`（色板 `theme-tokens.ts`）。**不要**为了「简化」改成只切 `html.dark` 或纯色遮罩。
+
+已踩过、禁止回退的约束：
+
+1. **克隆层必须冻结字面量 CSS 变量**（`freezeTheme`）——否则一切 `html.dark` 新旧两层同色，扩散等于消失。
+2. **用 `clip-path: circle()` + rAF**——Electron 上 View Transition / CSS `transition` mask 不可靠。
+3. **Radix Portal 菜单要进扩散层**——先建好旧/新两层克隆，再 `visibility:hidden` 藏真菜单；切勿先藏再克隆（会把 `hidden` 拷进新层）。
+4. **WCO 三按钮不能进 DOM 扩散**——等圆碰到右上角区域再 `preferences.applyTheme`；`preferences.set` 只落盘、不改 nativeTheme。
+5. 业务 UI 只调 `applyTheme` / `ThemeSegment`，不要在页面里再写一套切主题。
+
+排障细节见 `08-pitfalls.md`「主题扩散」。
 
 ## 5. 文案（给使用者看，不是给开发看）
 

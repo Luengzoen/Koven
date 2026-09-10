@@ -4,13 +4,13 @@ import { type ButtonHTMLAttributes, type Ref } from 'react'
 import { cn } from '@renderer/lib/cn'
 
 const buttonVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: 'bg-zinc-100 text-zinc-900 hover:bg-white',
-        outline: 'border border-zinc-700 bg-transparent text-zinc-100 hover:bg-zinc-800',
-        ghost: 'text-zinc-100 hover:bg-zinc-800'
+        default: 'bg-foreground text-background hover:opacity-90',
+        outline: 'border border-border bg-transparent text-foreground hover:bg-accent',
+        ghost: 'text-foreground hover:bg-accent'
       },
       size: {
         default: 'h-9 px-3',

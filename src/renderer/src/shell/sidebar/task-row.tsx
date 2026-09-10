@@ -14,8 +14,8 @@ export function TaskRow({ task }: { task: SidebarTask }) {
       className={cn(
         'group flex items-center gap-1 rounded-md py-1 pr-1 pl-2 text-sm transition-colors',
         active
-          ? 'bg-zinc-800 text-zinc-50'
-          : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100'
+          ? 'bg-accent text-accent-foreground'
+          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
       )}
     >
       <button
@@ -30,7 +30,7 @@ export function TaskRow({ task }: { task: SidebarTask }) {
       <button
         type="button"
         aria-label="任务菜单"
-        className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100 hover:bg-zinc-700 [&_svg]:size-3.5"
+        className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100 hover:bg-accent [&_svg]:size-3.5"
         onClick={(event) => event.stopPropagation()}
       >
         <EllipsisIcon />

@@ -87,3 +87,13 @@
 - **现象**：`Failed to load image from path 'D:\Desktop\build\koven.ico'`。
 - **根因**：运行时 `__dirname` 是 `out/main`，不是源码 `src/main/kernel`。多写一层 `../` 会跳出项目根。
 - **修复**：dev 用 `join(__dirname, '../../build/koven.ico')`；preload/renderer 同理相对 `out/main` 用 `../`，不要按源码目录层数推。
+
+## 坑 15：主题扩散「看不见 / 菜单消失 / 三按钮抢跑」
+
+- **现象**：切主题无圆扩散、只有纯色、菜单动画中消失、或标题栏三按钮过早变色。
+- **根因**（常见误改）：
+  1. 克隆层未冻结 CSS 变量 → 一切 `html.dark` 两层同色；
+  2. 依赖 View Transition / CSS mask transition → Electron 常无效；
+  3. 先 `visibility:hidden` 真 Portal 再克隆 → 新层菜单带着 hidden；
+  4. `preferences.set` 里同步 `nativeTheme` → 防抖落盘提前改 WCO。
+- **修复**：保持 `apply-theme.ts` 现流程（冻结双层 + `circle()` rAF + Portal 进层后再藏真菜单 + 圆到右上角再 `applyTheme`）。细则见 `09-ui-spec.md`「实现禁区」。

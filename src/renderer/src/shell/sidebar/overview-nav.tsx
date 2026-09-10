@@ -15,7 +15,9 @@ export function OverviewNav() {
 
   return (
     <section className="flex shrink-0 flex-col gap-1 px-2 pb-2" aria-label="Overview">
-      <h2 className="shrink-0 px-2 text-xs font-medium tracking-wide text-zinc-500">Overview</h2>
+      <h2 className="shrink-0 px-2 text-xs font-medium tracking-wide text-muted-foreground">
+        Overview
+      </h2>
       <nav className="flex flex-col gap-0.5">
         {overviewPages.map((entry) => {
           const Icon = overviewIcons[entry.id] ?? CompassIcon
@@ -28,8 +30,8 @@ export function OverviewNav() {
               className={cn(
                 'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm outline-none transition-colors',
                 active
-                  ? 'bg-zinc-800 text-zinc-50'
-                  : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100'
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
             >
               <Icon className="size-4 shrink-0" />

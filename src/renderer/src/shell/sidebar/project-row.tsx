@@ -12,7 +12,7 @@ type ProjectRowProps = {
 export function ProjectRow({ project, expanded, onToggle }: ProjectRowProps) {
   return (
     <div className="flex flex-col gap-0.5">
-      <div className="group flex items-center gap-1 rounded-md py-1 pr-1 pl-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900">
+      <div className="group flex items-center gap-1 rounded-md py-1 pr-1 pl-2 text-sm text-foreground/80 transition-colors hover:bg-muted">
         <button
           type="button"
           onClick={onToggle}
@@ -21,17 +21,17 @@ export function ProjectRow({ project, expanded, onToggle }: ProjectRowProps) {
         >
           <ChevronRightIcon
             className={cn(
-              'size-3.5 shrink-0 text-zinc-500 transition-transform',
+              'size-3.5 shrink-0 text-muted-foreground transition-transform',
               expanded && 'rotate-90'
             )}
           />
-          <FolderIcon className="size-4 shrink-0 text-zinc-400" />
+          <FolderIcon className="size-4 shrink-0 text-muted-foreground" />
           <span className="min-w-0 flex-1 truncate font-medium">{project.title}</span>
         </button>
         <button
           type="button"
           aria-label="新建任务"
-          className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100 hover:bg-zinc-700 [&_svg]:size-3.5"
+          className="inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded opacity-0 transition-opacity group-hover:opacity-100 hover:bg-accent [&_svg]:size-3.5"
           onClick={(event) => event.stopPropagation()}
         >
           <PlusIcon />

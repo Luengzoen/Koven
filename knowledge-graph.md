@@ -14,8 +14,8 @@
 | 形态 | Windows-only Electron 桌面应用（electron-vite，主进程 / preload / 渲染进程分离） |
 | 定位 | 从零开始的桌面壳：安全模型与工程约定先于业务 |
 | 技术栈 | Electron 44.2.0 + React 19 + TypeScript 5 / npm / Tailwind CSS 4 / Radix UI / Zustand 5 / electron-vite 开发打包 + electron-builder Windows 安装包 |
-| 已实现 | 窗口壳（WCO 标题栏 / 托盘 / 1024×700）+ 侧栏与 keepalive 占位导航 + 能力核骨架 + 窄 IPC + 壳快照/偏好 JSON 持久化 + 文件预算门禁 + Windows 打包 |
-| 占位 | 尚无真实业务数据；Projects/任务为演示树；主题与语言偏好已落盘但 UI 未接；埋点未做 |
+| 已实现 | 窗口壳（WCO 标题栏 / 托盘 / 1024×700）+ 侧栏与 keepalive 占位导航 + 能力核骨架 + 窄 IPC + 壳快照/偏好 JSON 持久化 + 明暗双主题（菜单 segment + WCO 同步）+ 文件预算门禁 + Windows 打包 |
+| 占位 | 尚无真实业务数据；Projects/任务为演示树；主题 UI 已接（偏好落盘 + 菜单 segment）；语言偏好已落盘但 UI 未接；埋点未做 |
 | 质量门槛 | 见 §3 |
 
 ## 2. 路由表（模块化）

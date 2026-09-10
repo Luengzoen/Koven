@@ -6,7 +6,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
   if (status === 'loading') {
     return (
       <LoaderCircleIcon
-        className="size-3.5 shrink-0 animate-spin text-zinc-400"
+        className="size-3.5 shrink-0 animate-spin text-muted-foreground"
         aria-label="进行中"
       />
     )
@@ -17,7 +17,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
       <span
         className={cn(
           'shrink-0 rounded px-1 py-0.5 text-[10px] leading-none font-medium',
-          'bg-emerald-500/15 text-emerald-400'
+          'bg-success/15 text-success'
         )}
       >
         完成
@@ -30,7 +30,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
       <span
         className={cn(
           'shrink-0 rounded px-1 py-0.5 text-[10px] leading-none font-medium',
-          'bg-red-500/15 text-red-400'
+          'bg-danger/15 text-danger'
         )}
       >
         失败

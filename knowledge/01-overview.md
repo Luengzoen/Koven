@@ -67,7 +67,7 @@ D:\Desktop\Koven
 │       ├── app/App.tsx        # 只挂壳
 │       ├── shell/             # 标题栏、侧栏、keepalive、会话 hydrate
 │       ├── routes.ts
-│       ├── capabilities/      # app-info / shelf（旧演示，未挂路由）
+│       ├── capabilities/      # preferences / app-info（关于）
 │       ├── components/ui/
 │       ├── lib/cn.ts
 │       └── assets/            # main.css、koven.png

@@ -16,7 +16,7 @@ const count = useCounterStore((state) => state.count)
 
 禁止 `const store = useCounterStore()` 再解构整棵树（会失去细粒度订阅）。需要浅比较多个字段时用 `useShallow`。
 
-**一包一店**。当前示例：`src/renderer/src/capabilities/shelf/counter-store.ts`（内存计数，刷新即丢，这是演示不是产品持久化）。禁止恢复全局 mega store。
+**一包一店**。壳导航、首选项内部分类、偏好等各自独立 store。禁止恢复全局 mega store。内存演示计数类代码不要再引入。
 
 跨包数据：走 IPC（main 为真源），或新建编排能力包。不要把两个 store 合并成一个大文件。
 

@@ -105,4 +105,4 @@ IPC 仍须三处同步（合约 → preload → main handle），但落在包内
 - `main.css` 只放入口与 token。
 - 注册表因 import 行数接近 200 时按域再拆，仍无业务逻辑。
 
-当前包：`shell`（快照 + 最大化状态）、`preferences`（偏好 JSON）、`app-info`（应用信息）。旧 `shelf` 演示页未挂路由，可删。
+当前包：`shell`（快照 + 最大化状态）、`preferences`（偏好 JSON）、`app-info`（关于用的 name/version）。

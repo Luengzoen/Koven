@@ -47,7 +47,7 @@
 
 | 通道 | 常量 | 行为 |
 |---|---|---|
-| `app-info:get` | `appInfoIpc.get` | 返回 `Result<AppInfo>` |
+| `app-info:get` | `appInfoIpc.get` | 返回 `Result<AppInfo>`（name / version，供关于对话框） |
 | `shell:is-maximized` | `shellIpc.isMaximized` | 当前窗是否最大化 |
 | `shell:maximized-changed` | `shellIpc.maximizedChanged` | main → renderer 推送（非 handle） |
 | `shell:get-snapshot` | `shellIpc.getSnapshot` | 读壳快照 JSON |

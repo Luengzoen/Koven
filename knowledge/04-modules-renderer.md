@@ -30,7 +30,7 @@
 | `src/renderer/src/routes.ts` | Overview + 任务占位页 + 首选项页注册表（`AppPage.chrome`） |
 | `src/renderer/src/assets/koven.png` | logo |
 | `src/renderer/src/capabilities/preferences/` | 首选项导航页（General / System；内部分类经壳快照持久化） |
-| `src/renderer/src/capabilities/app-info/` | 关于对话框；旧演示 `about-menu` / `app-info-grid`（未挂侧栏） |
+| `src/renderer/src/capabilities/app-info/` | 关于对话框 |
 
 CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）；`connect-src` 含 `ws:`/`wss:`（HMR）。收紧 CSP 时先读 `08-pitfalls.md`。
 
@@ -51,8 +51,7 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 | `components/ui/switch.tsx` | 二态开关（左关右开） |
 | `lib/cn.ts` | `clsx` + `tailwind-merge` |
 | `capabilities/preferences/` | 首选项导航页（General / System） |
-| `capabilities/app-info/` | 关于对话框；旧演示菜单/网格（未挂侧栏） |
-| `capabilities/shelf/` | 旧演示计数页（未挂路由，可删） |
+| `capabilities/app-info/` | 关于对话框 |
 
 新增可复用控件放 `components/ui/`；页面与业务组合放 `capabilities/<name>/`。壳导航与侧栏放 `shell/`。规范见 `09-ui-spec.md`、`10-architecture.md`。
 

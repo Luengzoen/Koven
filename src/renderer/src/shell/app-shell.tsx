@@ -16,7 +16,7 @@ export function AppShell() {
       <div className="flex min-h-0 flex-1">
         <Sidebar resizing={sidebarResizing} />
         <SidebarResizeHandle resizing={sidebarResizing} onResizingChange={setSidebarResizing} />
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-zinc-950">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-background">
           <PageTopbar />
           <KeepAliveOutlet />
         </main>

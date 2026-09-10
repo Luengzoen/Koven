@@ -17,7 +17,7 @@ export function TitleBar() {
   return (
     <header
       data-maximized={maximized}
-      className="flex h-[30px] shrink-0 items-center bg-zinc-900 [-webkit-app-region:drag] select-none"
+      className="flex h-[30px] shrink-0 items-center bg-titlebar [-webkit-app-region:drag] select-none"
     >
       <div className="flex items-center gap-2 overflow-hidden pr-[140px] pl-3.5 whitespace-nowrap">
         <img
@@ -26,7 +26,7 @@ export function TitleBar() {
           draggable={false}
           className="size-[18px] shrink-0 rounded object-contain select-none"
         />
-        <span className="text-xs font-semibold tracking-wide text-zinc-100">Koven</span>
+        <span className="text-xs font-semibold tracking-wide text-foreground">Koven</span>
       </div>
     </header>
   )

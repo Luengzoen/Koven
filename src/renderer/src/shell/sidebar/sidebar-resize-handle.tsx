@@ -64,7 +64,7 @@ export function SidebarResizeHandle({ resizing, onResizingChange }: SidebarResiz
       <div
         className={cn(
           'pointer-events-none absolute top-0 left-0 h-full w-px -translate-x-1/2 bg-transparent transition-colors',
-          resizing ? 'bg-zinc-500' : 'group-hover:bg-zinc-600'
+          resizing ? 'bg-muted-foreground' : 'group-hover:bg-border'
         )}
       />
     </div>

@@ -21,7 +21,7 @@ export function ProjectsTree() {
 
   return (
     <section className="flex min-h-0 flex-1 flex-col gap-1 px-2 pb-2">
-      <h2 className="shrink-0 px-2 text-xs font-medium tracking-wide text-zinc-500">
+      <h2 className="shrink-0 px-2 text-xs font-medium tracking-wide text-muted-foreground">
         Projects
       </h2>
       <div className="min-h-0 flex-1 overflow-y-auto">

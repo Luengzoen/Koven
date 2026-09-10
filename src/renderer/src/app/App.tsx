@@ -1,6 +1,12 @@
 import { AppShell } from '@renderer/shell/app-shell'
 import { hydrateSession } from '@renderer/shell/session-persistence'
+import { useThemeSync } from '@renderer/shell/use-theme-sync'
 import { useEffect, useState } from 'react'
+
+function AppReady() {
+  useThemeSync()
+  return <AppShell />
+}
 
 export default function App() {
   const [ready, setReady] = useState(false)
@@ -16,8 +22,8 @@ export default function App() {
   }, [])
 
   if (!ready) {
-    return <div className="h-full bg-zinc-950" />
+    return <div className="h-full bg-background" />
   }
 
-  return <AppShell />
+  return <AppReady />
 }

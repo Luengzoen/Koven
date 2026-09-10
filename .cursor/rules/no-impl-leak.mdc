@@ -1,0 +1,18 @@
+---
+description: 产品界面禁止泄露实现细节（AGENTS.md 铁律 15）
+alwaysApply: true
+---
+
+# 界面禁止泄露实现
+
+给使用者看的字只说「能做什么 / 出了什么状况」。代码注释和 `knowledge/` 可以写实现；产品界面不行。
+
+细则与正反例：`knowledge/09-ui-spec.md` §5。占位导航页可用「稍后提供」类说明；不要写技术栈 / IPC / 目录名。
+
+```tsx
+// ❌ 实现外泄
+<p>preload 的 contextBridge 已挂上 window.koven</p>
+
+// ✅ 使用者语言
+<p>应用信息已就绪</p>
+```

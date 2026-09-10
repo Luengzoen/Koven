@@ -1,0 +1,10 @@
+---
+description: 决策先查 knowledge-graph.md 路由表，再按需读 knowledge/ 分片
+alwaysApply: true
+---
+
+# 知识图谱路由制
+
+不好决策或缺少上下文时，先读项目根目录 `knowledge-graph.md`，再**按需阅读** `knowledge/` 下对应分片。禁止只读路由表不读分片，禁止全量读完所有分片，禁止凭猜测推进。
+
+改代码后同步更新对应分片。铁律全文见 `AGENTS.md`。

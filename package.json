@@ -18,7 +18,7 @@
     "build:win": "node scripts/build-win.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false && node scripts/check-file-budget.mjs",
     "new:capability": "node scripts/new-capability.mjs",
-    "sync:vibe": "node scripts/sync-vibe.mjs"
+    "sync": "node scripts/sync.mjs"
   },
   "dependencies": {
     "@electron-toolkit/utils": "^4.0.0"

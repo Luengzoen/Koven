@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { usePreferencesNavStore } from '@renderer/capabilities/preferences/preferences-nav-store'
 import { useNavigationStore } from '@renderer/shell/navigation-store'
 import { usePreferencesStore } from '@renderer/shell/preferences-store'
 import { useShellLayoutStore } from '@renderer/shell/shell-layout-store'
@@ -11,6 +12,7 @@ import {
 export function usePersistSession() {
   const activeId = useNavigationStore((state) => state.activeId)
   const sidebarSelectedId = useNavigationStore((state) => state.sidebarSelectedId)
+  const preferencesSectionId = usePreferencesNavStore((state) => state.sectionId)
   const sidebarOpen = useShellLayoutStore((state) => state.sidebarOpen)
   const sidebarWidth = useShellLayoutStore((state) => state.sidebarWidth)
   const theme = usePreferencesStore((state) => state.theme)
@@ -29,7 +31,7 @@ export function usePersistSession() {
       persistShellUiSoon()
     }, 200)
     return () => clearTimeout(timer)
-  }, [activeId, sidebarSelectedId, sidebarOpen, sidebarWidth])
+  }, [activeId, sidebarSelectedId, preferencesSectionId, sidebarOpen, sidebarWidth])
 
   useEffect(() => {
     if (!preferencesReady.current) {

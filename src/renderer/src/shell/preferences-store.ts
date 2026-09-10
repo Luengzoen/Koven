@@ -1,18 +1,24 @@
 import { create } from 'zustand'
-import type { PreferencesSnapshot, ThemePreference } from '@shared/capabilities/preferences'
+import {
+  defaultGeneralPreferences,
+  type GeneralPreferences,
+  type PreferencesSnapshot,
+  type ThemePreference
+} from '@shared/capabilities/preferences'
 
 type PreferencesState = PreferencesSnapshot & {
   hydrate: (snapshot: PreferencesSnapshot) => void
   setTheme: (theme: ThemePreference) => void
   setLocale: (locale: string) => void
-  setGeneral: (general: Record<string, unknown>) => void
+  setGeneral: (general: GeneralPreferences) => void
+  patchGeneral: (patch: Partial<GeneralPreferences>) => void
 }
 
 const defaults: PreferencesSnapshot = {
   version: 1,
   theme: 'system',
   locale: 'zh-CN',
-  general: {}
+  general: { ...defaultGeneralPreferences }
 }
 
 export const usePreferencesStore = create<PreferencesState>((set) => ({
@@ -20,5 +26,9 @@ export const usePreferencesStore = create<PreferencesState>((set) => ({
   hydrate: (snapshot) => set({ ...snapshot }),
   setTheme: (theme) => set({ theme }),
   setLocale: (locale) => set({ locale }),
-  setGeneral: (general) => set({ general })
+  setGeneral: (general) => set({ general }),
+  patchGeneral: (patch) =>
+    set((state) => ({
+      general: { ...state.general, ...patch }
+    }))
 }))

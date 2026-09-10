@@ -1,4 +1,5 @@
 import { app, BrowserWindow, Menu, Tray } from 'electron'
+import { loadPreferences } from '../capabilities/preferences/preferences-store'
 import { resolveAppIconPath } from './app-icon'
 
 /** 已进入真正退出流程（before-quit / 系统关机）；窗口 close 不再拦截为隐藏 */
@@ -27,11 +28,18 @@ export function requestQuit(): void {
 }
 
 /**
- * 点窗口关闭钮：默认隐藏到托盘，不算退出。
+ * 点窗口关闭钮：按偏好隐藏到托盘或真正退出。
  * 真正退出流程（quitting）时放行 close。
  */
 export function handleCloseRequest(win: BrowserWindow, event: Electron.Event): void {
   if (quitting) return
+
+  const { closeBehavior } = loadPreferences().general
+  if (closeBehavior === 'quit') {
+    markQuitting()
+    return
+  }
+
   event.preventDefault()
   win.hide()
 }

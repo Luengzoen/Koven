@@ -24,16 +24,21 @@
 
 | 场景 | 用什么 | 约定 |
 |---|---|---|
-| 按钮 | `Button`（Slot + cva） | default / outline / ghost；icon 用 `size="icon"` |
-| 对话框 | `Dialog` | 必须有 `DialogTitle`（可视或 `sr-only`）；关闭钮要有「关闭」可读名称 |
+| 按钮 | `Button`（Slot + cva） | default / primary / outline / ghost；icon 用 `size="icon"` |
+| 对话框 | `Dialog` | 必须有 `DialogTitle`（可视或 `sr-only`）；关闭钮要有「关闭」可读名称；关于用居中紧凑布局。首选项是主区导航页，不用 Dialog |
+| 页面顶栏 | `PageTopbar` | 侧栏按钮固定；居中 `AppPage.title`；返回由 `chrome.showBack` 开关（箭头 + 上一页 title，无 title 则仅箭头） |
 | 菜单 | `DropdownMenu` | `Item` 放在 `Group` 里；危险项以后用独立约定，不要 `window.confirm` |
 | 分割线 | `Separator` | 不要手写 `hr` 或 `border-t` 当语义分割 |
+| 滑条 | `Slider` | 离散刻度 + 胶囊拇指；下方稀疏标签（如字号「小/默认/大」）；轨道用 `foreground`/`border` 等语义色适配明暗 |
+| 开关 | `Switch` | 二态；未选中在左、选中在右；轨道始终灰色激活底（`muted-foreground/40`，双主题），圆点样式不变 |
 
-新增 primitive：先加 Radix 包装到 `components/ui/`，页面只组合，不把 Overlay/Portal 散落在业务文件里。
+新增 primitive：先加 Radix 包装到 `components/ui/`，页面只组合，不把 Overlay/Portal 散落在业务文件里。本地离散控件（如 Slider）也可放 `components/ui/`，不强制上 Radix。
 
-## 4. 主题
+## 4. 主题与文字
 
 清爽明暗双主题；界面主体黑白灰。暗色用 `html.dark`（`@custom-variant dark`）。偏好：`system` / `light` / `dark`，落盘见 `06-patterns-state.md`。
+
+文字：General 可选 Win 常见中文字体（下拉项用对应 `font-family` 预览）与五档字号（极小…大，默认标准）。`applyTypography` 写 `--font-sans-family` / `--font-scale`；`main.css` 的 `@theme` 用 `calc(基准 * var(--font-scale))` 定义 `--text-xs`…`--text-3xl`。禁止新写 `text-[Npx]`，用 `text-*` 以便跟档。控制高度（`h-*`）不随字号涨。System：关闭行为 `closeBehavior`（`tray` | `quit`，默认托盘）。
 
 ### 语义 token（`main.css`）
 
@@ -49,7 +54,7 @@
 
 语义色（双主题各有值，极个别场景用）：`primary`（工具蓝）、`success`（绿）、`danger`（红）、`warning`（黄）、`info`（常规信息色）。对应 `*-foreground` 为其上文字色。
 
-切换：侧栏「系统设置」菜单内「主题」+ segment；扩散与 WCO 时机见下方「实现禁区」。首次 hydrate / 跟随系统无动画。
+切换：侧栏「系统设置」菜单内「主题」+ segment；扩散与 WCO 时机见下方「实现禁区」。首次 hydrate / 跟随系统无动画。字体族与五档字号在「首选项 → General」可改并落盘（`applyTypography`）。语言偏好仍落盘，界面文案尚未跟 locale 切换。
 
 ### 实现禁区（改主题动画前必读）
 

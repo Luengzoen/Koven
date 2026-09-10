@@ -37,7 +37,7 @@
 
 窗口默认与最小均为 1024×700；无快照或落盘几何无效时相对主屏工作区居中。`titleBarStyle: 'hidden'` + `titleBarOverlay`（高 30px，右上角保留 Windows 原生最小化/最大化/关闭）；`preload: join(__dirname, '../preload/index.js')`；`contextIsolation: true`；`nodeIntegration: false`；`sandbox: true`；开发态 `icon: build/koven.ico`；外链 `openExternal` + `deny`；开发 `loadURL`，否则 `loadFile`。
 
-**关闭与托盘**：点窗口关闭钮 → `preventDefault` 后 `hide()`（常驻托盘，不算退出）。托盘单击 → 恢复主窗口。托盘菜单「退出 Koven」→ `app.quit()`；「显示主窗口」「设置」暂为占位（disabled）。`before-quit` / `query-session-end` 置 `quitting`，此后 close 不再拦截。
+**关闭与托盘**：点窗口关闭钮 → 读 `preferences.general.closeBehavior`（默认 `tray`：`preventDefault` + `hide()`；`quit`：放行关闭并退出）。托盘单击 → 恢复主窗口。托盘菜单「退出 Koven」→ `app.quit()`；「显示主窗口」「设置」暂为占位（disabled）。`before-quit` / `query-session-end` 置 `quitting`，此后 close 不再拦截。
 
 图标：`build/koven.ico`（electron-builder `win.icon` + dev 窗口/托盘）；打包后托盘读 `extraResources` 复制的 `resources/koven.ico`。渲染进程标题栏 logo 用 `src/renderer/src/assets/koven.png`。
 

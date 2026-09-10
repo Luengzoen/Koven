@@ -19,10 +19,22 @@ export type ShellWindowState = {
   maximized: boolean
 }
 
+export const preferencesSectionIds = ['general', 'system'] as const
+export type PreferencesSectionId = (typeof preferencesSectionIds)[number]
+
+export function normalizePreferencesSectionId(raw: unknown): PreferencesSectionId {
+  if (typeof raw === 'string' && (preferencesSectionIds as readonly string[]).includes(raw)) {
+    return raw as PreferencesSectionId
+  }
+  return 'general'
+}
+
 export type ShellNavigationState = {
   activePageId: string
   /** 仅侧栏常规入口写入；非侧栏进入时为 null */
   sidebarSelectedId: string | null
+  /** 首选项内部分类（General / System 等） */
+  preferencesSectionId: PreferencesSectionId
 }
 
 export type ShellSidebarState = {

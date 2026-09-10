@@ -10,6 +10,7 @@ import type {
   ShellWindowBounds,
   ShellWindowState
 } from '@shared/capabilities/shell'
+import { normalizePreferencesSectionId } from '@shared/capabilities/shell'
 import { readJson, writeJson } from '../../kernel/storage'
 
 const CAPABILITY = 'shell'
@@ -36,7 +37,8 @@ export function createDefaultShellSnapshot(): ShellSnapshot {
     },
     navigation: {
       activePageId: 'overview:home',
-      sidebarSelectedId: 'overview:home'
+      sidebarSelectedId: 'overview:home',
+      preferencesSectionId: 'general'
     },
     sidebar: {
       open: true,
@@ -101,7 +103,8 @@ export function normalizeShellSnapshot(raw: unknown): ShellSnapshot {
           ? nav.sidebarSelectedId
           : nav.sidebarSelectedId === null
             ? null
-            : defaults.navigation.sidebarSelectedId
+            : defaults.navigation.sidebarSelectedId,
+      preferencesSectionId: normalizePreferencesSectionId(nav.preferencesSectionId)
     }
   }
 

@@ -1,4 +1,9 @@
-import type { PreferencesSnapshot, ThemePreference } from '@shared/capabilities/preferences'
+import {
+  defaultGeneralPreferences,
+  normalizeGeneralPreferences,
+  type PreferencesSnapshot,
+  type ThemePreference
+} from '@shared/capabilities/preferences'
 import { readJson, writeJson } from '../../kernel/storage'
 
 const CAPABILITY = 'preferences'
@@ -11,7 +16,7 @@ export function createDefaultPreferences(): PreferencesSnapshot {
     version: 1,
     theme: 'system',
     locale: 'zh-CN',
-    general: {}
+    general: { ...defaultGeneralPreferences }
   }
 }
 
@@ -30,10 +35,7 @@ export function normalizePreferences(raw: unknown): PreferencesSnapshot {
       ? record.locale
       : defaults.locale
 
-  const general =
-    record.general && typeof record.general === 'object' && !Array.isArray(record.general)
-      ? (record.general as Record<string, unknown>)
-      : defaults.general
+  const general = normalizeGeneralPreferences(record.general)
 
   return {
     version: 1,
@@ -63,6 +65,8 @@ export function patchPreferences(
     version: 1,
     theme: patch.theme ?? current.theme,
     locale: patch.locale ?? current.locale,
-    general: patch.general ?? current.general
+    general: patch.general
+      ? normalizeGeneralPreferences({ ...current.general, ...patch.general })
+      : current.general
   })
 }

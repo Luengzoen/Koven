@@ -1,13 +1,16 @@
+import { usePreferencesNavStore } from '@renderer/capabilities/preferences/preferences-nav-store'
 import {
   SIDEBAR_WIDTH_DEFAULT,
   SIDEBAR_WIDTH_MAX,
   SIDEBAR_WIDTH_MIN
 } from '@renderer/shell/shell-layout-store'
 import { applyTheme } from '@renderer/shell/apply-theme'
+import { applyTypography } from '@renderer/shell/apply-typography'
 import { useNavigationStore } from '@renderer/shell/navigation-store'
 import { usePreferencesStore } from '@renderer/shell/preferences-store'
 import { useShellLayoutStore } from '@renderer/shell/shell-layout-store'
 import { resolveNavigationHydration } from '@renderer/shell/sidebar-selection'
+import { normalizePreferencesSectionId } from '@shared/capabilities/shell'
 
 function clampWidth(width: number): number {
   return Math.min(SIDEBAR_WIDTH_MAX, Math.max(SIDEBAR_WIDTH_MIN, Math.round(width)))
@@ -28,6 +31,9 @@ export async function hydrateSession(): Promise<void> {
       navigation.sidebarSelectedId
     )
     useNavigationStore.getState().hydrate(resolved.activeId, resolved.sidebarSelectedId)
+    usePreferencesNavStore
+      .getState()
+      .hydrate(normalizePreferencesSectionId(navigation.preferencesSectionId))
     useShellLayoutStore.setState({
       sidebarOpen: sidebar.open,
       sidebarWidth: clampWidth(sidebar.width) || SIDEBAR_WIDTH_DEFAULT
@@ -37,6 +43,7 @@ export async function hydrateSession(): Promise<void> {
   if (preferencesResult.ok) {
     usePreferencesStore.getState().hydrate(preferencesResult.value)
     applyTheme({ preference: preferencesResult.value.theme })
+    applyTypography(preferencesResult.value.general)
   }
 }
 
@@ -44,10 +51,12 @@ export function persistShellUiSoon(): void {
   if (!window.koven) return
   const navigation = useNavigationStore.getState()
   const layout = useShellLayoutStore.getState()
+  const preferencesSectionId = usePreferencesNavStore.getState().sectionId
   void window.koven.shell.patchUi({
     navigation: {
       activePageId: navigation.activeId,
-      sidebarSelectedId: navigation.sidebarSelectedId
+      sidebarSelectedId: navigation.sidebarSelectedId,
+      preferencesSectionId
     },
     sidebar: {
       open: layout.sidebarOpen,

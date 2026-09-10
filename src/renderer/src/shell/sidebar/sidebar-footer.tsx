@@ -1,3 +1,4 @@
+import { AboutDialog } from '@renderer/capabilities/app-info/about-dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,11 +7,14 @@ import {
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
 import { ThemeSegment } from '@renderer/components/ui/theme-segment'
+import { useNavigationStore } from '@renderer/shell/navigation-store'
 import { ChevronsUpDownIcon, SettingsIcon } from 'lucide-react'
-
-const placeholderItems = ['关于 Koven', '检查更新', '帮助'] as const
+import { useState } from 'react'
 
 export function SidebarFooter() {
+  const open = useNavigationStore((state) => state.open)
+  const [aboutOpen, setAboutOpen] = useState(false)
+
   return (
     <div className="shrink-0 border-t border-border p-2">
       <DropdownMenu>
@@ -33,12 +37,15 @@ export function SidebarFooter() {
             <ThemeSegment />
           </div>
           <DropdownMenuGroup>
-            {placeholderItems.map((label) => (
-              <DropdownMenuItem key={label}>{label}</DropdownMenuItem>
-            ))}
+            <DropdownMenuItem onSelect={() => open('preferences')}>首选项</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setAboutOpen(true)}>关于</DropdownMenuItem>
+            <DropdownMenuItem disabled>检查更新</DropdownMenuItem>
+            <DropdownMenuItem disabled>帮助</DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} />
     </div>
   )
 }

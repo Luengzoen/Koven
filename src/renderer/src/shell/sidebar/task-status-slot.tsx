@@ -16,7 +16,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
     return (
       <span
         className={cn(
-          'shrink-0 rounded px-1 py-0.5 text-[10px] leading-none font-medium',
+          'shrink-0 rounded px-1 py-0.5 text-xs leading-none font-medium',
           'bg-success/15 text-success'
         )}
       >
@@ -29,7 +29,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
     return (
       <span
         className={cn(
-          'shrink-0 rounded px-1 py-0.5 text-[10px] leading-none font-medium',
+          'shrink-0 rounded px-1 py-0.5 text-xs leading-none font-medium',
           'bg-danger/15 text-danger'
         )}
       >

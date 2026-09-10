@@ -4,13 +4,10 @@ export const appInfoIpc = {
   get: 'app-info:get'
 } as const
 
+/** 给「关于」用的最小应用信息（不暴露运行时/路径细节） */
 export type AppInfo = {
   name: string
   version: string
-  electronVersion: string
-  chromeVersion: string
-  nodeVersion: string
-  dataRoot: string
 }
 
 export type AppInfoAPI = {

@@ -5,6 +5,7 @@ import {
   type PreferencesSnapshot,
   type ThemePreference
 } from '@shared/capabilities/preferences'
+import { refreshTrayMenu } from '../../kernel/tray'
 import { applyNativeThemeSource } from './apply-native-theme'
 import { loadPreferences, patchPreferences } from './preferences-store'
 
@@ -24,7 +25,12 @@ export function registerPreferences(): void {
     if (!patch || typeof patch !== 'object') {
       return ok(loadPreferences())
     }
+    const previous = loadPreferences()
     // 只落盘；WCO / nativeTheme 由 preferences:apply-theme 控制时机（等扩散圆碰到右上角）
-    return ok(patchPreferences(patch as Partial<Omit<PreferencesSnapshot, 'version'>>))
+    const next = patchPreferences(patch as Partial<Omit<PreferencesSnapshot, 'version'>>)
+    if (previous.locale !== next.locale) {
+      refreshTrayMenu()
+    }
+    return ok(next)
   })
 }

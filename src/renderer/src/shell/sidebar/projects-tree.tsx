@@ -1,8 +1,10 @@
 import { mockProjects } from '@renderer/shell/sidebar/mock-projects'
 import { ProjectRow } from '@renderer/shell/sidebar/project-row'
+import { useT } from '@renderer/shell/use-t'
 import { useState } from 'react'
 
 export function ProjectsTree() {
+  const t = useT()
   const [expandedIds, setExpandedIds] = useState<ReadonlySet<string>>(
     () => new Set(mockProjects[0] ? [mockProjects[0].id] : [])
   )
@@ -22,7 +24,7 @@ export function ProjectsTree() {
   return (
     <section className="flex min-h-0 flex-1 flex-col gap-1 px-2 pb-2">
       <h2 className="shrink-0 px-2 text-xs font-medium tracking-wide text-muted-foreground">
-        Projects
+        {t('nav.sectionProjects')}
       </h2>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="flex flex-col gap-1 pr-0.5">

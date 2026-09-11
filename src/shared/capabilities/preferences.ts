@@ -1,4 +1,9 @@
 import type { Result } from '../kernel/result'
+import type { LocaleId } from '../i18n/locale'
+import { defaultLocale, normalizeLocale } from '../i18n/locale'
+
+export type { LocaleId }
+export { defaultLocale, normalizeLocale }
 
 export const preferencesIpc = {
   get: 'preferences:get',
@@ -118,7 +123,7 @@ export function fontSizeScale(id: FontSizeId): number {
 export type PreferencesSnapshot = {
   version: 1
   theme: ThemePreference
-  locale: string
+  locale: LocaleId
   general: GeneralPreferences
 }
 

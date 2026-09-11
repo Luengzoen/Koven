@@ -20,7 +20,9 @@
 | `src/renderer/src/shell/create-navigation-store.ts` | 导航 store 工厂（含返回栈；不落盘） |
 | `src/renderer/src/shell/keep-alive-outlet.tsx` | 已访问页保活（隐藏非当前页） |
 | `src/renderer/src/shell/session-persistence.ts` | hydrate + 写回 shell/preferences |
-| `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（字体族·字号落盘 + UI 已接） |
+| `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（字体族·字号·关闭行为落盘；语言驱动 `useT`） |
+| `src/renderer/src/shell/use-t.ts` | 订阅 `locale`，返回 `t(key)` |
+| `src/renderer/src/shell/use-document-lang.ts` | 同步 `html[lang]` |
 | `src/renderer/src/shell/theme-resolve.ts` | `ThemePreference` → 实际 light/dark |
 | `src/renderer/src/shell/apply-theme.ts` | 写 `html.dark`；可选圆形外扩 VT |
 | `src/renderer/src/shell/apply-typography.ts` | 写 `--font-scale` / `--font-sans-family` |
@@ -63,8 +65,8 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 - 默认/恢复：Overview 或上次 `activePageId`；侧栏高亮用 `sidebarSelectedId`（仅常规侧栏入口；对不上则不高亮）。
 - Overview / Projects 任务用 `openFromSidebar`；非侧栏进入用 `open`（清高亮）；「首选项」走 `open('preferences')`。
 - topbar：始终显示侧栏按钮与当前页 `title`；`AppPage.chrome.showBack` 为真时显示 iOS 风格返回（左箭头 + 上一页 title，拿不到 title 则只显示箭头）；目前仅 `preferences` 开启。返回走 `back()` / `backStack`（内存，不落盘）。
-- 侧栏搜索只读；加号/三点占位；底部「系统设置」菜单含主题 segment、首选项页、关于对话框（检查更新 / 帮助仍占位）。首选项含 General（字体/字号）与 System（关闭时：隐藏到托盘 / 退出主程序）；内部分类 `preferencesSectionId` 随壳会话落盘。
-- 壳 UI 与偏好防抖写回 `.data/capabilities/shell/snapshot.json` 与 `preferences/preferences.json`。
+- 侧栏搜索只读；加号/三点占位；底部「系统设置」菜单含主题 segment、首选项页、关于对话框（检查更新 / 帮助仍占位）。首选项含 General（字体/字号/语言）与 System（关闭时：隐藏到托盘 / 退出主程序）；内部分类 `preferencesSectionId` 随壳会话落盘。
+- 壳 UI 与偏好防抖写回 `.data/capabilities/shell/snapshot.json` 与 `preferences/preferences.json`。语言切换立即 `setLocale` + `preferences.set`，界面与托盘菜单立刻换文案（无需重启）。
 - 侧栏收起/展开为宽度过渡（拖宽时关过渡）；收起仍记住 `sidebarWidth`。
 - 仍不上 react-router。
 

@@ -1,5 +1,7 @@
 import { app, dialog } from 'electron'
+import { t } from '@shared/i18n'
 import { appFolderName, dataWritable, getDataRoot, isolatedPaths, packaged } from '../env'
+import { loadPreferences } from '../capabilities/preferences/preferences-store'
 import { appLog } from './app-log'
 
 export function applyIsolatedPaths(): void {
@@ -24,9 +26,10 @@ export function applyIsolatedPaths(): void {
   )
 
   if (packaged) {
+    const locale = loadPreferences().locale
     dialog.showErrorBox(
-      '数据目录不可写',
-      `程序安装目录没有写入权限，应用数据将保存到系统默认位置。\n建议安装到可写目录（如 D:\\Program Files\\Koven）。`
+      t(locale, 'paths.dataNotWritableTitle'),
+      t(locale, 'paths.dataNotWritableBody')
     )
   }
 }

@@ -38,7 +38,9 @@
 
 清爽明暗双主题；界面主体黑白灰。暗色用 `html.dark`（`@custom-variant dark`）。偏好：`system` / `light` / `dark`，落盘见 `06-patterns-state.md`。
 
-文字：General 可选 Win 常见中文字体（下拉项用对应 `font-family` 预览）与五档字号（极小…大，默认标准）。`applyTypography` 写 `--font-sans-family` / `--font-scale`；`main.css` 的 `@theme` 用 `calc(基准 * var(--font-scale))` 定义 `--text-xs`…`--text-3xl`。禁止新写 `text-[Npx]`，用 `text-*` 以便跟档。控制高度（`h-*`）不随字号涨。System：关闭行为 `closeBehavior`（`tray` | `quit`，默认托盘）。
+文字：General 可选 Win 常见中文字体（下拉项用对应 `font-family` 预览；产品名两语均保留中文）与五档字号（极小…大，默认标准），以及界面语言（简体中文 / English）。`applyTypography` 写 `--font-sans-family` / `--font-scale`；`main.css` 的 `@theme` 用 `calc(基准 * var(--font-scale))` 定义 `--text-xs`…`--text-3xl`。禁止新写 `text-[Npx]`，用 `text-*` 以便跟档。控制高度（`h-*`）不随字号涨。System：关闭行为 `closeBehavior`（`tray` | `quit`，默认托盘）。
+
+文案：壳层 / 设置 / 关于 / 托盘等使用者可见字符串走 `src/shared/i18n`（`t` / `useT`），禁止在组件里硬编码双语。项目名与任务名（用户数据）不进词典。`locale` 落盘后切换立即生效（同步 `html[lang]`；主进程重建托盘菜单），不弹重启对话框。
 
 ### 语义 token（`main.css`）
 
@@ -54,7 +56,7 @@
 
 语义色（双主题各有值，极个别场景用）：`primary`（工具蓝）、`success`（绿）、`danger`（红）、`warning`（黄）、`info`（常规信息色）。对应 `*-foreground` 为其上文字色。
 
-切换：侧栏「系统设置」菜单内「主题」+ segment；扩散与 WCO 时机见下方「实现禁区」。首次 hydrate / 跟随系统无动画。字体族与五档字号在「首选项 → General」可改并落盘（`applyTypography`）。语言偏好仍落盘，界面文案尚未跟 locale 切换。
+切换：侧栏「系统设置」菜单内「主题」+ segment；扩散与 WCO 时机见下方「实现禁区」。首次 hydrate / 跟随系统无动画。字体族、五档字号与语言在「首选项 → 通用」可改并落盘（`applyTypography` / `setLocale`）。
 
 ### 实现禁区（改主题动画前必读）
 

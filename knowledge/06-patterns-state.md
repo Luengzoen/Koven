@@ -26,7 +26,7 @@ const count = useCounterStore((state) => state.count)
 |---|---|
 | 仅当前窗口的 UI（弹层开关、输入草稿、计数演示） | Zustand（该能力包内） |
 | 壳会话（窗口、侧栏、当前页） | main JSON：`getDataRoot()/capabilities/shell/snapshot.json` |
-| 偏好（主题、语言、general 字体/字号） | main JSON：`getDataRoot()/capabilities/preferences/preferences.json`；UI：侧栏主题 segment + 首选项 General |
+| 偏好（主题、语言、general 字体/字号/关闭行为） | main JSON：`getDataRoot()/capabilities/preferences/preferences.json`；UI：侧栏主题 segment + 首选项 General（含语言）/ System |
 | 需要跨窗口、重启仍在、或碰磁盘/系统 | 主进程 + IPC，文件走 `kernel/storage.ts`（原子写） |
 | 密钥、不可信输入、权限 | 只在 main；renderer 只拿最小结果 |
 
@@ -39,7 +39,7 @@ const count = useCounterStore((state) => state.count)
 | 文件 | 域 |
 |---|---|
 | `…/capabilities/shell/snapshot.json` | B：窗口、导航页、侧栏选中、开合、宽度、首选项内部分类 `preferencesSectionId` |
-| `…/capabilities/preferences/preferences.json` | A：theme / locale / general（`fontFamily` + `fontSize` 五档 + `closeBehavior`） |
+| `…/capabilities/preferences/preferences.json` | A：theme / locale（`'zh-CN' \| 'en'`）/ general（`fontFamily` + `fontSize` 五档 + `closeBehavior`） |
 
 ### 版本迁移
 

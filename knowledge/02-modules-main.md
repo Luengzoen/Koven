@@ -36,12 +36,12 @@
 | `capabilities/shell/window-state.ts` | 窗口 move/resize/close 写回 |
 | `capabilities/preferences/` | 偏好 JSON；load 时 migrate + normalize；写 theme 时同步 `nativeTheme` |
 | `kernel/app-icon.ts` | 解析图标：dev 为 `out/main` 上两级的 `build/koven.ico`；打包托盘为 `resources/koven.ico` |
-| `kernel/tray.ts` | 系统托盘、关闭隐藏到托盘、退出守卫放行标志 |
+| `kernel/tray.ts` | 系统托盘、关闭隐藏到托盘、退出守卫；菜单文案走 `t(locale)`；`refreshTrayMenu` 供语言切换 |
 | `kernel/title-bar-overlay.ts` | WCO 标题栏颜色；可显式传 dark，或读 `shouldUseDarkColors` |
 
 窗口默认与最小均为 1024×700；无快照或落盘几何无效时相对主屏工作区居中。`titleBarStyle: 'hidden'` + `titleBarOverlay`（高 30px，右上角保留 Windows 原生最小化/最大化/关闭）；`preload: join(__dirname, '../preload/index.js')`；`contextIsolation: true`；`nodeIntegration: false`；`sandbox: true`；开发态 `icon: build/koven.ico`；外链 `openExternal` + `deny`；开发 `loadURL`，否则 `loadFile`。
 
-**关闭与托盘**：点窗口关闭钮 → 读 `preferences.general.closeBehavior`（默认 `tray`：`preventDefault` + `hide()`；`quit`：放行关闭并退出）。托盘单击 → 恢复主窗口。托盘菜单「退出 Koven」→ `app.quit()`；「显示主窗口」「设置」暂为占位（disabled）。`before-quit` / `query-session-end` 置 `quitting`，此后 close 不再拦截。
+**关闭与托盘**：点窗口关闭钮 → 读 `preferences.general.closeBehavior`（默认 `tray`：`preventDefault` + `hide()`；`quit`：放行关闭并退出）。托盘单击 → 恢复主窗口。托盘菜单「退出 Koven」→ `app.quit()`；「显示主窗口」「设置」暂为占位（disabled）；菜单文案随 `locale` 切换（`preferences:set` 改语言时 `refreshTrayMenu`）。`before-quit` / `query-session-end` 置 `quitting`，此后 close 不再拦截。
 
 图标：`build/koven.ico`（electron-builder `win.icon` + dev 窗口/托盘）；打包后托盘读 `extraResources` 复制的 `resources/koven.ico`。渲染进程标题栏 logo 用 `src/renderer/src/assets/koven.png`。
 
@@ -57,5 +57,5 @@
 | `shell:get-snapshot` | `shellIpc.getSnapshot` | 读壳快照 JSON |
 | `shell:patch-ui` | `shellIpc.patchUi` | 合并写导航/侧栏（不改 window，window 由 main 窗口事件写） |
 | `preferences:get` | `preferencesIpc.get` | 读偏好 JSON |
-| `preferences:set` | `preferencesIpc.set` | 合并写 theme/locale/general（只落盘，不改 WCO） |
+| `preferences:set` | `preferencesIpc.set` | 合并写 theme/locale/general（只落盘，不改 WCO）；locale 变更时重建托盘菜单 |
 | `preferences:apply-theme` | `preferencesIpc.applyTheme` | 渲染 → main（`send`）：立刻改 themeSource + WCO；主题扩散圆碰到右上角时再调 |

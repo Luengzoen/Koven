@@ -1,7 +1,8 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { useT } from '@renderer/shell/use-t'
+import { cn } from '@renderer/lib/cn'
 import { XIcon } from 'lucide-react'
 import { type ComponentProps } from 'react'
-import { cn } from '@renderer/lib/cn'
 
 function Dialog(props: ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root {...props} />
@@ -47,12 +48,19 @@ function DialogContent({
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute top-3 right-3 z-10 inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground [&_svg]:size-4">
-          <XIcon />
-          <span className="sr-only">关闭</span>
-        </DialogPrimitive.Close>
+        <DialogCloseButton />
       </DialogPrimitive.Content>
     </DialogPortal>
+  )
+}
+
+function DialogCloseButton() {
+  const t = useT()
+  return (
+    <DialogPrimitive.Close className="absolute top-3 right-3 z-10 inline-flex size-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground [&_svg]:size-4">
+      <XIcon />
+      <span className="sr-only">{t('common.close')}</span>
+    </DialogPrimitive.Close>
   )
 }
 

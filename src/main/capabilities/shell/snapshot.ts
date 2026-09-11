@@ -11,10 +11,19 @@ import type {
   ShellWindowState
 } from '@shared/capabilities/shell'
 import { normalizePreferencesSectionId } from '@shared/capabilities/shell'
+import { appLog } from '../../kernel/app-log'
+import { migrateJson, type MigrationStep } from '../../kernel/migrate-json'
 import { readJson, writeJson } from '../../kernel/storage'
 
 const CAPABILITY = 'shell'
 const FILE = 'snapshot.json'
+export const SHELL_SCHEMA_VERSION = 1
+
+/** steps[i]: version i → i+1 */
+export const shellMigrations: readonly MigrationStep[] = [
+  // 0 → 1: unversioned / legacy blobs become v1 before normalize
+  (raw) => raw
+]
 
 export const defaultWindowBounds = {
   width: 1024,
@@ -25,7 +34,7 @@ export const defaultWindowBounds = {
 
 export function createDefaultShellSnapshot(): ShellSnapshot {
   return {
-    version: 1,
+    version: SHELL_SCHEMA_VERSION,
     window: {
       bounds: {
         x: 0,
@@ -121,7 +130,7 @@ export function normalizeShellSnapshot(raw: unknown): ShellSnapshot {
   }
 
   return {
-    version: 1,
+    version: SHELL_SCHEMA_VERSION,
     window: windowState,
     navigation,
     sidebar
@@ -151,11 +160,30 @@ export function centeredWindowBounds(width: number, height: number): ShellWindow
   }
 }
 
+function loadAndMigrateShellSnapshot(raw: unknown): ShellSnapshot {
+  const migrated = migrateJson(raw, SHELL_SCHEMA_VERSION, shellMigrations)
+  const normalized = normalizeShellSnapshot(migrated.value)
+
+  if (migrated.migrated) {
+    const written = writeJson(CAPABILITY, FILE, normalized)
+    if (!written.ok) {
+      appLog.error('shell', `migrate write failed: ${written.error.message}`)
+    } else {
+      appLog.info(
+        'shell',
+        `migrated snapshot.json v${migrated.fromVersion} → v${migrated.toVersion}`
+      )
+    }
+  }
+
+  return normalized
+}
+
 /** 磁盘无快照时返回 null（视为首次启动） */
 export function tryLoadShellSnapshot(): ShellSnapshot | null {
   const result = readJson<unknown>(CAPABILITY, FILE)
   if (!result.ok) return null
-  return normalizeShellSnapshot(result.value)
+  return loadAndMigrateShellSnapshot(result.value)
 }
 
 export function loadShellSnapshot(): ShellSnapshot {
@@ -163,7 +191,10 @@ export function loadShellSnapshot(): ShellSnapshot {
 }
 
 export function saveShellSnapshot(snapshot: ShellSnapshot): void {
-  writeJson(CAPABILITY, FILE, normalizeShellSnapshot(snapshot))
+  const written = writeJson(CAPABILITY, FILE, normalizeShellSnapshot(snapshot))
+  if (!written.ok) {
+    appLog.error('shell', `save snapshot failed: ${written.error.message}`)
+  }
 }
 
 export function patchShellUi(patch: ShellUiPatch): ShellSnapshot {

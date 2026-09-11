@@ -1,7 +1,8 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { err, ok, type Result } from '@shared/kernel/result'
-import { dataRoot } from '../env'
+import { getDataRoot } from '../env'
+import { writeFileAtomic } from './atomic-file-write'
 
 const capabilityNamePattern = /^[a-z][a-z0-9-]*$/
 const fileNamePattern = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/
@@ -15,7 +16,7 @@ function resolveCapabilityFile(capability: string, file: string): Result<string>
     return err('storage.invalid-file', '存储文件名不合法')
   }
 
-  return ok(join(dataRoot, 'capabilities', capability, file))
+  return ok(join(getDataRoot(), 'capabilities', capability, file))
 }
 
 export function readJson<T>(capability: string, file: string): Result<T> {
@@ -40,9 +41,8 @@ export function writeJson(capability: string, file: string, value: unknown): Res
   }
 
   try {
-    mkdirSync(join(dataRoot, 'capabilities', capability), { recursive: true })
-    writeFileSync(pathResult.value, `${JSON.stringify(value, null, 2)}\n`, 'utf8')
-    return ok(undefined)
+    mkdirSync(join(getDataRoot(), 'capabilities', capability), { recursive: true })
+    return writeFileAtomic(pathResult.value, `${JSON.stringify(value, null, 2)}\n`)
   } catch (error) {
     const message = error instanceof Error ? error.message : '写入失败'
     return err('storage.write-failed', message)

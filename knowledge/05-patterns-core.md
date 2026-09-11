@@ -45,5 +45,16 @@ IPC 返回 `Result<T, AppError>`（`src/shared/kernel/result.ts`），不要每�
 - `@electron-toolkit/preload` 那种把 `ipcRenderer` 整包挂到 `window.electron`。
 - 在 renderer 写相对路径去读项目文件。
 - 为了省事把业务逻辑只写在 main 又在 renderer 用 `any` 调 IPC。
-- 无名垃圾桶文件：`utils.ts` / `helpers.ts` / `types.ts` / `common.ts`。
+- 无名垃圾桶文件：`utils.ts` / `helpers.ts` / `types.ts` / `common.ts`（需要共享逻辑时用带名词的文件，如 `atomic-file-write.ts`）。
 - main 去 import `src/renderer`。
+
+## 5. ESLint 边界（与上表双保险）
+
+根目录 `eslint.config.mjs`（flat）：
+
+- renderer：禁止 `electron` / `fs` / `path` / `node:fs` / `node:path`
+- preload：禁止 `fs` 与 React
+- 全仓：禁止导入/创建上述垃圾桶文件名
+- 命令：`npm run lint`（并进 `npm run check`）
+
+漏改三端 IPC 时另靠 `scripts/check-capability-sync.mjs`（在 `typecheck` 内），不只靠 ESLint。

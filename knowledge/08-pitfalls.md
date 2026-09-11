@@ -28,11 +28,11 @@
 - **根因**：TS 6 弃用 `baseUrl`；`paths` 早已不需要它。
 - **修复**：删除 `baseUrl`，把映射写成相对本文件的路径（`"@shared/*": ["./src/shared/*"]`）。不要用 `ignoreDeprecations` 当长期方案。
 
-## 坑 5：在浏览器打开 `localhost:5173` 信息一直「读取中…」
+## 坑 5：在浏览器打开 `localhost:5173` 信息一直「读取中…」或 IPC「不可用」
 
-- **现象**：Vite 页能点计数和菜单，但 Electron/Chrome/Node/数据目录不出现。
-- **根因**：那是渲染进程开发服务器，没有 preload，`window.koven` 不存在。
-- **修复**：以 `npm start` 打开的 **Electron 窗口** 为准验证 IPC。可选链 `window.koven?.` 只防止预览崩掉。
+- **现象**：Vite 页能点菜单/样式，但没有 `window.koven`，应用信息/落盘不出现。
+- **根因**：那是渲染进程开发服务器，**没有 preload**。
+- **修复**：样式与纯客户端 Zustand 可用浏览器；IPC / 托盘 / 原生主题 / 落盘必须以 `npm start` 的 **Electron 窗口**为准（Agent 须先获用户授权）。可选链 `window.koven?.` 只防止预览崩掉，不能当集成测试。
 
 ## 坑 6：绕过 confine 启动
 
@@ -60,9 +60,9 @@
 
 ## 坑 10：安装包内写不进 `.data`
 
-- **现象**：装到 Program Files 后启动失败或弹出「数据目录不可写」。
+- **现象**：装到 Program Files 后弹出「数据目录不可写」，或数据不在安装目录。
 - **根因**：部分盘符上的 Program Files 继承了 Users 只读 ACL。
-- **修复**：installer.nsh 的 `customInstall` 已 `icacls` 授权；默认装到 `D:\Program Files\Koven`。仍失败则改安装路径。不要为了省事改回静默写系统 AppData（仅不可写时才回退默认位置并弹窗）。
+- **修复**：installer.nsh 的 `customInstall` 已 `icacls` 授权；默认装到 `D:\Program Files\Koven`。仍失败则改安装路径。产品策略：不可写时**不拒绝启动**，Electron 与能力 JSON **全量**落到系统默认 `%APPDATA%\koven` 并弹窗告知。
 
 ## 坑 11：NSIS 检测不到 D 盘
 
@@ -97,3 +97,9 @@
   3. 先 `visibility:hidden` 真 Portal 再克隆 → 新层菜单带着 hidden；
   4. `preferences.set` 里同步 `nativeTheme` → 防抖落盘提前改 WCO。
 - **修复**：保持 `apply-theme.ts` 现流程（冻结双层 + `circle()` rAF + Portal 进层后再藏真菜单 + 圆到右上角再 `applyTheme`）。细则见 `09-ui-spec.md`「实现禁区」。
+
+## 坑 16：JSON 半截写入或升级后字段错乱
+
+- **现象**：断电后 `snapshot.json` / `preferences.json` 损坏，或改字段后旧文件行为怪异。
+- **根因**：非原子写会截断正式文件；只改 normalize 不 bump `version` 无法区分旧形状。
+- **修复**：一律经 `storage.writeJson`（内部 `atomic-file-write`）；形状变更走 `migrate-json` 迁移步并提高 schema version。

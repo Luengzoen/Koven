@@ -14,23 +14,27 @@
 
 - 非 `win32`：`console.error` 后 `process.exit(1)`。
 - 开发：`projectRoot = join(__dirname, '../..')`（`out/main` 上两级为仓库根）。
-- 安装包内：`__dirname` 含 `app.asar` 时，`projectRoot = dirname(process.execPath)`（安装目录），`.data` 写在 exe 旁边。
-- 打包态先做可写探测（写 `.write-probe` 再删）。不可写则**不**改 `setPath`，弹窗建议装到 `D:\Program Files\Koven`（installer.nsh 会 `icacls` 放开 Users 写权限；无 D 盘回退系统 Program Files）。
+- 安装包内：`__dirname` 含 `app.asar` 时，`projectRoot = dirname(process.execPath)`（安装目录），优先把 `.data` 写在 exe 旁边。
+- 打包态先做可写探测（写 `.write-probe` 再删）。
+  - **可写**：`getDataRoot()` = `<install|project>/.data`；`apply-isolated-paths` 调 `app.setPath`；覆盖 `APPDATA` 等环境变量。
+  - **不可写（产品策略）**：**不拒绝启动**。Electron 保持系统默认路径；`getDataRoot()` 改为 `%APPDATA%\koven`（与默认 `userData` 同根），能力 JSON / 应用日志一并落那里；打包态弹窗告知「将保存到系统默认位置」。installer.nsh 会 `icacls` 尽量避免此分支。
 - 可写时在 `.data/` 下创建：`appData` / `localAppData` / `userData` / `sessionData` / `temp` / `logs` / `crashDumps` / `disk-cache`。
-- 覆盖 `APPDATA`、`LOCALAPPDATA`、`TMP`、`TEMP`、`TMPDIR`。
 
 ## 3. 内核
 
 | 文件 | 作用 |
 |---|---|
-| `kernel/start-app.ts` | `whenReady`、AppUserModelId、快捷键、退出口 |
-| `kernel/apply-isolated-paths.ts` | `app.setPath` / 不可写弹窗 / disk-cache 开关 |
+| `kernel/start-app.ts` | `whenReady`、AppUserModelId、快捷键、退出口、启动日志 |
+| `kernel/apply-isolated-paths.ts` | `app.setPath` / 不可写弹窗与全量回落 / disk-cache 开关 |
 | `kernel/create-main-window.ts` | 窗口工厂（WCO 自定义标题栏 + 可传尺寸 options） |
 | `kernel/register-ipc.ts` | 只调用各包 `registerXxx()` |
-| `kernel/storage.ts` | `readJson` / `writeJson` → `.data/capabilities/<name>/` |
-| `capabilities/shell/snapshot.ts` | 壳快照 JSON（窗口/导航/侧栏） |
+| `kernel/storage.ts` | `readJson` / `writeJson`（原子写）→ `getDataRoot()/capabilities/<name>/` |
+| `kernel/atomic-file-write.ts` | Windows 安全替换：`*.tmp` → 备份旧文件 → rename |
+| `kernel/migrate-json.ts` | 通用 JSON `version` 迁移（`steps[i]: i → i+1`） |
+| `kernel/app-log.ts` | 主进程结构化日志追加到 `getLogsRoot()/main.log` |
+| `capabilities/shell/snapshot.ts` | 壳快照 JSON（窗口/导航/侧栏）；load 时 migrate + normalize |
 | `capabilities/shell/window-state.ts` | 窗口 move/resize/close 写回 |
-| `capabilities/preferences/` | 偏好 JSON（主题/语言/general）；写 theme 时同步 `nativeTheme.themeSource` |
+| `capabilities/preferences/` | 偏好 JSON；load 时 migrate + normalize；写 theme 时同步 `nativeTheme` |
 | `kernel/app-icon.ts` | 解析图标：dev 为 `out/main` 上两级的 `build/koven.ico`；打包托盘为 `resources/koven.ico` |
 | `kernel/tray.ts` | 系统托盘、关闭隐藏到托盘、退出守卫放行标志 |
 | `kernel/title-bar-overlay.ts` | WCO 标题栏颜色；可显式传 dark，或读 `shouldUseDarkColors` |

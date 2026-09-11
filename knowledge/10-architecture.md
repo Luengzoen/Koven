@@ -43,16 +43,17 @@ src/renderer/src/components/ui/  # 无业务的 Radix 包装
 npm run new:capability -- <kebab-name>
 ```
 
-生成四端骨架后，开发者填 use-case，并在注册表各加一行。只做界面时删掉未用的 main/preload/shared 骨架，不要注册空 API。
+生成四端骨架，并**自动**在三端注册表各加一行（`app-api.ts` / `register-ipc.ts` / `preload/index.ts`；幂等，已存在则跳过）。开发者填 use-case；有页面时再改 `routes.ts`。只做界面、不要 IPC：**不要**跑本命令，只在 renderer 加页面并注册路由，勿建空 main/preload/shared。
 
 ## 3. 三端注册表
 
 | 端 | 文件 | 加一行 |
 |---|---|---|
-| 合约组装 | `src/shared/app-api.ts` | `AppAPI = ... & FooAPI` |
-| 主进程 | `src/main/kernel/register-ipc.ts` | `registerFoo()` |
-| preload | `src/preload/index.ts` | `...fooApi` |
-| 页面 | `src/renderer/src/routes.ts` | 有页面才注册 |
+| 合约组装 | `src/shared/app-api.ts` | `AppAPI = ... & FooAPI`（`new:capability` 自动） |
+| 主进程 | `src/main/kernel/register-ipc.ts` | `registerFoo()`（自动） |
+| preload | `src/preload/index.ts` | `...fooApi`（自动） |
+| 页面 | `src/renderer/src/routes.ts` | 有页面才注册（仍手改） |
+
 
 IPC 仍须三处同步（合约 → preload → main handle），但落在包内，不改 `src/main/index.ts` 正文。
 
@@ -60,12 +61,14 @@ IPC 仍须三处同步（合约 → preload → main handle），但落在包内
 
 通道名：`<capability>:<action>`。页面调用：`window.koven.<capability>.<action>()`。IPC 返回 `Result<T, AppError>`。
 
-持久化走 `src/main/kernel/storage.ts` 的 `readJson` / `writeJson`，落点 `.data/capabilities/<name>/`。当前约定：
+持久化走 `src/main/kernel/storage.ts` 的 `readJson` / `writeJson`（**必须**经内核原子写），落点 `getDataRoot()/capabilities/<name>/`（可写时为 `.data/…`，不可写时为 `%APPDATA%\koven/…`）。当前约定：
 
-- **B 壳会话** → `shell/snapshot.json`
-- **A 偏好** → `preferences/preferences.json`
+- **B 壳会话** → `shell/snapshot.json`（load：migrate → normalize → 必要时写回）
+- **A 偏好** → `preferences/preferences.json`（同上）
 
 禁止 `localStorage` 当业务库。埋点与多行业务以后另仓（可 SQLite），见 `06-patterns-state.md`。
+
+IPC 三端齐套由 `scripts/check-capability-sync.mjs` 门禁（并进 `npm run typecheck`）：漏注册表 / 缺 preload api / 缺 shared 合约会失败。只做 UI、无 IPC 的包不要建空的 main/preload 骨架去注册。
 
 壳布局（侧栏、topbar、keepalive）放 `src/renderer/src/shell/`，不算业务能力包；业务页仍进 `capabilities/<name>/` 或经 `routes.ts` 注册的占位页。
 
@@ -89,7 +92,7 @@ IPC 仍须三处同步（合约 → preload → main handle），但落在包内
 | 门槛 | 行数 | 行为 |
 |---|---|---|
 | 软 | 300 | 还会继续涨则先提出拆分，由用户决定 |
-| 硬 | 500 | `scripts/check-file-budget.mjs` 失败，已并进 `npm run typecheck` |
+| 硬 | 500 | `scripts/check-file-budget.mjs` 失败，已并进 `npm run typecheck` / `npm run check` |
 
 范围：`src/**/*.{ts,tsx,css}`、`scripts/*.{js,mjs}`。图谱分片靠近 500 行就拆新分片并改路由表。
 

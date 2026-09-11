@@ -295,7 +295,7 @@ if (dryRun) {
 }
 
 const buildStart = performance.now()
-const typecheckCode = await runWithProgress('npm', ['run', 'typecheck'], '类型检查')
+const typecheckCode = await runWithProgress('npm', ['run', 'check'], '质量检查')
 if (typecheckCode !== 0) exitWithReplay(typecheckCode)
 
 const viteCode = await runWithProgress(

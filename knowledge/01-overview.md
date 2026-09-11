@@ -43,10 +43,15 @@ D:\Desktop\Koven
 ├── AGENTS.md
 ├── knowledge-graph.md
 ├── knowledge/                 # 图谱分片 01-10
-├── scripts/confine.js
-├── scripts/build-win.mjs
-├── scripts/check-file-budget.mjs
-├── scripts/new-capability.mjs
+├── scripts/
+│   ├── confine.js
+│   ├── build-win.mjs
+│   ├── check-file-budget.mjs
+│   ├── check-capability-sync.mjs
+│   ├── new-capability.mjs
+│   └── sync.mjs
+├── vitest.config.ts
+├── eslint.config.mjs
 ├── src/
 │   ├── main/
 │   │   ├── env.ts             # 先于 electron 的环境与路径隔离

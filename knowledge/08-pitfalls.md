@@ -70,11 +70,11 @@
 - **根因**：`${FileExists} "D:\"` 对盘符根恒假。
 - **修复**：用 `"D:\*.*"`。installer.nsh 已按此写。
 
-## 坑 12：Windows 下直接 spawn `electron-builder` ENOENT
+## 坑 12：Windows 下直接 spawn `electron-builder` ENOENT / `D:\Program` 不是命令
 
-- **现象**：build:win 走到打包环节无输出就退出。
-- **根因**：`.cmd` 包装脚本必须经 cmd.exe；且 `node_modules/.bin` 不在非 npm 的 PATH。
-- **修复**：打包走 `process.execPath` + `scripts/confine.js pack`；对 `npm` 命令保留 `shell: true`。
+- **现象**：`npm run check` 通过后，前端构建或 pack 瞬间失败；回放出现 `'D:\Program' 不是内部或外部命令`。
+- **根因**：① `.cmd` 包装脚本必须经 cmd.exe；② 对 `process.execPath`（常为 `D:\Program Files\nodejs\node.exe`）再开 `shell: true` 时，cmd 会在空格处拆命令。
+- **修复**：打包走 `process.execPath` + `scripts/confine.js pack`；**仅**对 `npm` 保留 `shell: true`，对 `process.execPath` 关 shell（`build-win.mjs` 的 `runWithProgress`）。
 
 ## 坑 13：installer.nsh 中文乱码
 
@@ -103,3 +103,9 @@
 - **现象**：断电后 `snapshot.json` / `preferences.json` 损坏，或改字段后旧文件行为怪异。
 - **根因**：非原子写会截断正式文件；只改 normalize 不 bump `version` 无法区分旧形状。
 - **修复**：一律经 `storage.writeJson`（内部 `atomic-file-write`）；形状变更走 `migrate-json` 迁移步并提高 schema version。
+
+## 坑 17：`npm run publish` 发错包 / 失败
+
+- **现象**：上传了旧安装包；或报缺少 token / 无产物 / Release 已存在。
+- **根因**：选包按 `dist/koven-*-setup.exe` 的 **mtime**，不是 `package.json` 版本；目录里留着历史包时，若刚打的包 mtime 不是最新会选错；缺 `GH_TOKEN`、未先 `build:win`、或同 tag 已发过都会失败。
+- **修复**：发版前确认最新一次 `build:win` 已完成；`npm run publish -- --dry-run` 核对文件名与 tag；在项目根 `.env` 写 `GH_TOKEN=`（已 gitignore）或设会话级环境变量；已存在则删 Release/tag 或升版本重打。

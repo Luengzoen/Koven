@@ -13,6 +13,7 @@
 | `npm run build` | `scripts/confine.js build` → `electron-vite build`（出 `out/`） |
 | `npm run build:unpack` | `electron-vite build` + `electron-builder --dir`（绿色目录 `dist/win-unpacked`） |
 | `npm run build:win` | `scripts/build-win.mjs`：可选升版本 → **`npm run check`** → confine build → confine pack（NSIS） |
+| `npm run publish` | `scripts/publish-release.mjs`：从 `dist/` **mtime 最新** 的 `koven-*-setup.exe` 建公开 GitHub Release（不打包） |
 | `npm run typecheck` | 两套 `tsc --noEmit` + `check-file-budget.mjs` + `check-capability-sync.mjs` |
 | `npm run lint` | ESLint（`eslint.config.mjs`） |
 | `npm test` / `npm run test:watch` | Vitest（`vitest.config.ts`，`src/**/*.test.ts`） |
@@ -39,6 +40,7 @@
 |---|---|---|---|
 | `confine.js` | 工具链落盘隔离后 spawn install/dev/preview/build/pack/unpack | npm 各入口 / `build-win.mjs` | 优先经 npm；勿旁路 |
 | `build-win.mjs` | 升版本 + check + 打包 NSIS | `npm run build:win` | 可（大下载仍交用户） |
+| `publish-release.mjs` | mtime 选最新 setup.exe → GitHub Releases（公开 latest） | `npm run publish` | 可（须 `GH_TOKEN`；不启 Electron） |
 | `check-file-budget.mjs` | 源码行数硬门槛 500 | `npm run typecheck` | 可 |
 | `check-capability-sync.mjs` | IPC 能力包三端 + `app-api` / 注册表齐套 | `npm run typecheck` | 可 |
 | `new-capability.mjs` | 生成能力包四端骨架 + 自动三端注册表 | `npm run new:capability` | 可 |
@@ -66,7 +68,7 @@
 
 ## 2.5 electron-builder（仅 Windows）
 
-配置：`electron-builder.yml` + `build/installer.nsh` + `scripts/build-win.mjs`。打包流程对齐参考项目的发版方式，**不含**自动更新源 / changelog 业务。
+配置：`electron-builder.yml` + `build/installer.nsh` + `scripts/build-win.mjs`。打包流程对齐参考项目的发版方式，**不含**自动更新源 / changelog 业务。发版托管用独立脚本 `npm run publish`（GitHub Releases），**不要**在 yml 里写 `publish:`，以免本地 `build:win` 误上传。
 
 - `productName` 与 `win.executableName` 都是 `Koven`（安装目录 / 快捷方式 / 任务栏 / 卸载列表一致）。
 - `author` 必须是对象 `{ "name": "Koven" }`，否则 exe 属性里公司名为空；`copyright` 写在 yml。
@@ -92,9 +94,26 @@ npm run build:win -- --version 1.5.0      # 必须大于当前版本，可简写
 npm run build:win -- --dry-run            # 只预览版本，不写文件不打包
 ```
 
-版本写回：正则只替换 `"version": "旧版本"`（package.json 最多 1 处、lock 最多 2 处根版本）。内部链路：`npm run check` → `node scripts/confine.js build` → `node scripts/confine.js pack`。Windows 下 spawn **npm** 必须 `shell: true`；confine 本身用 `process.execPath` 跑 js，避免 `.cmd` ENOENT。
+版本写回：正则只替换 `"version": "旧版本"`（package.json 最多 1 处、lock 最多 2 处根版本）。内部链路：`npm run check` → `node scripts/confine.js build` → `node scripts/confine.js pack`。Windows 下 spawn **npm** 必须 `shell: true`；confine 本身用 `process.execPath` 跑 js（**不要**再开 shell，否则 `Program Files` 空格会被 cmd 拆开），避免 `.cmd` ENOENT。
 
 进度：electron-builder 的 `•` 行切中文阶段；`signing` 行滞后，耗时是行间窗口不是单文件耗时，以 `dist/` 产物 mtime 为准。阶段名按 key **长度降序**匹配（`building block map` 必须先于 `building`）。
+
+### publish（GitHub Releases）
+
+```bash
+# 一次性：复制 .env.example → .env，填入 classic PAT（repo）或 fine-grained（Contents + Releases 写）
+# .env 已 gitignore，勿提交
+npm run build:win -- --i patch     # 先本地打包
+npm run publish                    # 上传 mtime 最新安装包
+npm run publish -- --dry-run       # 只预览选中文件与 tag
+```
+
+- **不**重新打包；无 `dist/` 或无匹配 `koven-<x.y.z>-setup.exe` 则失败。
+- 选包规则：按 **mtime 最新**，不是 `package.json` 版本；tag / Release 名从文件名解析（`v1.0.1`）。
+- `draft: false` + `make_latest: true`；同主名 `.blockmap` 存在则一并上传。
+- tag/Release 已存在 → 失败（不覆盖）。owner/repo 从 `git remote origin` 解析。
+- 鉴权：优先已有环境变量，否则读项目根 **`.env`** 的 `GH_TOKEN` / `GITHUB_TOKEN`（脚本自解析，无 dotenv 依赖）。`.env` 必须 gitignore；可用 `.env.example` 作模板。
+- 进度：与 `build:win` 同风格（阶段号 + 转圈/进度条 + 耗时 + `✓`）。上传阶段用**本地已发送字节**画行内进度条（GitHub 上传 API **无**进度回调）；非上传阶段仍用转圈。
 
 首次打包会拉 NSIS 等工具（可能超过 50MB）。按铁律 8，Agent 不代下；缓存目录 `.electron-builder-cache`。
 
@@ -129,6 +148,6 @@ npm run build:win -- --dry-run            # 只预览版本，不写文件不打
 
 ## 6. 版本控制忽略
 
-`.gitignore`：`node_modules/`、`out/`、`dist/`、`.data/`、`.npm-cache/`、`.electron-cache/`、`.electron-builder-cache/`、`*.tsbuildinfo`。
+`.gitignore`：`node_modules/`、`out/`、`dist/`、`.data/`、`.npm-cache/`、`.electron-cache/`、`.electron-builder-cache/`、`*.tsbuildinfo`、**`.env`** / `.env.local` / `.env.*.local`。
 
-**保留 `package-lock.json`。**
+**保留 `package-lock.json`。** 发版令牌只放本地 `.env`（见 `.env.example`），禁止提交。

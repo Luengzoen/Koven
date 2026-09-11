@@ -6,3 +6,6 @@ dist/
 .electron-cache/
 .electron-builder-cache/
 *.tsbuildinfo
+.env
+.env.local
+.env.*.local

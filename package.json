@@ -18,6 +18,7 @@
     "build": "node scripts/confine.js build",
     "build:unpack": "node scripts/confine.js unpack",
     "build:win": "node scripts/build-win.mjs",
+    "publish": "node scripts/publish-release.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.node.json --composite false && tsc --noEmit -p tsconfig.web.json --composite false && node scripts/check-file-budget.mjs && node scripts/check-capability-sync.mjs",
     "lint": "eslint src",
     "test": "vitest run",

@@ -222,10 +222,14 @@ function handleBuilderLine(line) {
 function runWithProgress(cmd, args, name, extraEnv = {}) {
   return new Promise((resolve) => {
     beginStage(name)
+    // Windows：npm 是 .cmd，必须 shell；process.execPath（常含 Program Files 空格）
+    // 若再开 shell，会被 cmd 在空格处拆成 `D:\Program` 导致「不是内部或外部命令」。
+    const useShell = process.platform === 'win32' && cmd === 'npm'
     const child = spawn(cmd, args, {
       cwd: root,
-      shell: process.platform === 'win32',
-      env: { ...process.env, ...extraEnv }
+      shell: useShell,
+      env: { ...process.env, ...extraEnv },
+      windowsHide: false
     })
     for (const stream of [child.stdout, child.stderr]) {
       const rl = createInterface({ input: stream, crlfDelay: Infinity })

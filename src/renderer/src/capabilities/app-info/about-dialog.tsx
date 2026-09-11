@@ -5,6 +5,7 @@ import {
   DialogDescription,
   DialogTitle
 } from '@renderer/components/ui/dialog'
+import { useT } from '@renderer/shell/use-t'
 import appIcon from '@renderer/assets/koven.png'
 import { CornerDownLeftIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -17,6 +18,7 @@ type AboutDialogProps = {
 export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
   const [version, setVersion] = useState<string | null>(null)
   const [status, setStatus] = useState<string | null>(null)
+  const t = useT()
 
   useEffect(() => {
     if (!open) {
@@ -30,29 +32,29 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
     })
   }, [open])
 
-  const versionText = version ? `版本 ${version}` : '正在加载版本信息'
+  const versionText = version
+    ? t('about.version', { v: version })
+    : t('about.loadingVersion')
 
   const copyVersion = async (): Promise<void> => {
     const text = version ? `Koven ${version}` : 'Koven'
     try {
       await navigator.clipboard.writeText(text)
-      setStatus('版本信息已复制')
+      setStatus(t('about.versionCopied'))
     } catch {
-      setStatus('复制失败，请稍后重试')
+      setStatus(t('about.copyFailed'))
     }
   }
 
   const checkUpdates = (): void => {
-    setStatus('暂时无法检查更新')
+    setStatus(t('about.updatesUnavailable'))
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex w-[min(calc(100%-2rem),360px)] flex-col items-center gap-0 px-6 pt-10 pb-5 text-center">
-        <DialogTitle className="sr-only">关于 Koven</DialogTitle>
-        <DialogDescription className="sr-only">
-          查看应用版本，并复制版本信息
-        </DialogDescription>
+        <DialogTitle className="sr-only">{t('about.title')}</DialogTitle>
+        <DialogDescription className="sr-only">{t('about.description')}</DialogDescription>
 
         <img
           src={appIcon}
@@ -65,10 +67,10 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
 
         <div className="mt-6 flex w-full items-center justify-center gap-2">
           <Button variant="outline" className="flex-1" onClick={checkUpdates}>
-            检查更新…
+            {t('about.checkUpdates')}
           </Button>
           <Button variant="primary" className="flex-1" onClick={() => void copyVersion()}>
-            复制版本信息
+            {t('about.copyVersion')}
             <CornerDownLeftIcon />
           </Button>
         </div>
@@ -82,7 +84,7 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
         )}
 
         <p className="mt-2 text-xs text-muted-foreground/80">
-          Copyright © {new Date().getFullYear()} Koven. All rights reserved.
+          {t('about.copyright', { year: new Date().getFullYear() })}
         </p>
       </DialogContent>
     </Dialog>

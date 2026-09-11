@@ -1,14 +1,9 @@
 import { applyTheme } from '@renderer/shell/apply-theme'
 import { usePreferencesStore } from '@renderer/shell/preferences-store'
+import { useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
 import type { ThemePreference } from '@shared/capabilities/preferences'
 import { MonitorIcon, MoonIcon, SunIcon } from 'lucide-react'
-
-const options = [
-  { value: 'system' as const, label: '跟随系统', Icon: MonitorIcon },
-  { value: 'light' as const, label: '浅色', Icon: SunIcon },
-  { value: 'dark' as const, label: '深色', Icon: MoonIcon }
-]
 
 const thumbIndex: Record<ThemePreference, number> = {
   system: 0,
@@ -24,6 +19,13 @@ export function ThemeSegment({ className }: ThemeSegmentProps) {
   const theme = usePreferencesStore((state) => state.theme)
   const setTheme = usePreferencesStore((state) => state.setTheme)
   const activeIndex = thumbIndex[theme]
+  const t = useT()
+
+  const options = [
+    { value: 'system' as const, label: t('nav.themeSystem'), Icon: MonitorIcon },
+    { value: 'light' as const, label: t('nav.themeLight'), Icon: SunIcon },
+    { value: 'dark' as const, label: t('nav.themeDark'), Icon: MoonIcon }
+  ]
 
   const select = (value: ThemePreference, el: HTMLElement): void => {
     if (value === theme) return
@@ -46,7 +48,7 @@ export function ThemeSegment({ className }: ThemeSegmentProps) {
   return (
     <div
       role="radiogroup"
-      aria-label="主题"
+      aria-label={t('nav.theme')}
       className={cn(
         'relative inline-flex h-7 items-center rounded-md bg-background p-0.5 ring-1 ring-border',
         className

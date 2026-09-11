@@ -1,4 +1,5 @@
 import { useShellLayoutStore } from '@renderer/shell/shell-layout-store'
+import { useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
 import { useEffect, useRef } from 'react'
 
@@ -11,6 +12,7 @@ export function SidebarResizeHandle({ resizing, onResizingChange }: SidebarResiz
   const sidebarOpen = useShellLayoutStore((state) => state.sidebarOpen)
   const setSidebarWidth = useShellLayoutStore((state) => state.setSidebarWidth)
   const dragging = useRef(false)
+  const t = useT()
 
   useEffect(() => {
     function onPointerMove(event: PointerEvent) {
@@ -40,7 +42,7 @@ export function SidebarResizeHandle({ resizing, onResizingChange }: SidebarResiz
     <div
       role="separator"
       aria-orientation="vertical"
-      aria-label="调整侧栏宽度"
+      aria-label={t('nav.resizeSidebar')}
       aria-hidden={!sidebarOpen}
       className={cn(
         'group relative z-10 w-0 shrink-0 transition-opacity duration-200',

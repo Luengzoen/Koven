@@ -1,6 +1,8 @@
 import {
   defaultGeneralPreferences,
+  defaultLocale,
   normalizeGeneralPreferences,
+  normalizeLocale,
   type PreferencesSnapshot,
   type ThemePreference
 } from '@shared/capabilities/preferences'
@@ -24,7 +26,7 @@ export function createDefaultPreferences(): PreferencesSnapshot {
   return {
     version: PREFERENCES_SCHEMA_VERSION,
     theme: 'system',
-    locale: 'zh-CN',
+    locale: defaultLocale,
     general: { ...defaultGeneralPreferences }
   }
 }
@@ -39,10 +41,7 @@ export function normalizePreferences(raw: unknown): PreferencesSnapshot {
       ? (record.theme as ThemePreference)
       : defaults.theme
 
-  const locale =
-    typeof record.locale === 'string' && record.locale.length > 0
-      ? record.locale
-      : defaults.locale
+  const locale = normalizeLocale(record.locale)
 
   const general = normalizeGeneralPreferences(record.general)
 

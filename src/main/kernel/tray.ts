@@ -1,5 +1,6 @@
 import { app, BrowserWindow, Menu, Tray } from 'electron'
 import { loadPreferences } from '../capabilities/preferences/preferences-store'
+import { t } from '@shared/i18n'
 import { resolveAppIconPath } from './app-icon'
 
 /** 已进入真正退出流程（before-quit / 系统关机）；窗口 close 不再拦截为隐藏 */
@@ -44,16 +45,25 @@ export function handleCloseRequest(win: BrowserWindow, event: Electron.Event): v
   win.hide()
 }
 
+function buildTrayMenu(): Menu {
+  const locale = loadPreferences().locale
+  return Menu.buildFromTemplate([
+    { label: t(locale, 'tray.showMainWindow'), enabled: false },
+    { label: t(locale, 'tray.settings'), enabled: false },
+    { type: 'separator' },
+    { label: t(locale, 'tray.quit'), click: () => requestQuit() }
+  ])
+}
+
+/** 语言切换后重建托盘菜单文案 */
+export function refreshTrayMenu(): void {
+  if (!tray) return
+  tray.setContextMenu(buildTrayMenu())
+}
+
 export function createTray(win: BrowserWindow): void {
   tray = new Tray(resolveAppIconPath())
   tray.setToolTip('Koven')
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      { label: '显示主窗口', enabled: false },
-      { label: '设置', enabled: false },
-      { type: 'separator' },
-      { label: '退出 Koven', click: () => requestQuit() }
-    ])
-  )
+  tray.setContextMenu(buildTrayMenu())
   tray.on('click', () => showMainWindow(win))
 }

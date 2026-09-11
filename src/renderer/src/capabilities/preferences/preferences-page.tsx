@@ -1,17 +1,19 @@
 import { GeneralPane } from '@renderer/capabilities/preferences/general-pane'
 import { usePreferencesNavStore } from '@renderer/capabilities/preferences/preferences-nav-store'
 import { SystemPane } from '@renderer/capabilities/preferences/system-pane'
+import { useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
 import type { PreferencesSectionId } from '@shared/capabilities/shell'
+import type { MessageKey } from '@shared/i18n'
 import { MonitorIcon, SearchIcon, Settings2Icon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-const sections = [
-  { id: 'general' as const, label: 'General', Icon: Settings2Icon },
-  { id: 'system' as const, label: 'System', Icon: MonitorIcon }
+const sectionDefs = [
+  { id: 'general' as const, labelKey: 'prefs.sectionGeneral' as const, Icon: Settings2Icon },
+  { id: 'system' as const, labelKey: 'prefs.sectionSystem' as const, Icon: MonitorIcon }
 ] satisfies ReadonlyArray<{
   id: PreferencesSectionId
-  label: string
+  labelKey: MessageKey
   Icon: typeof Settings2Icon
 }>
 
@@ -19,12 +21,22 @@ export function PreferencesPage() {
   const activeId = usePreferencesNavStore((state) => state.sectionId)
   const setSectionId = usePreferencesNavStore((state) => state.setSectionId)
   const [query, setQuery] = useState('')
+  const t = useT()
+
+  const sections = useMemo(
+    () =>
+      sectionDefs.map((section) => ({
+        ...section,
+        label: t(section.labelKey)
+      })),
+    [t]
+  )
 
   const visibleSections = useMemo(() => {
     const trimmed = query.trim().toLowerCase()
     if (!trimmed) return sections
     return sections.filter((section) => section.label.toLowerCase().includes(trimmed))
-  }, [query])
+  }, [query, sections])
 
   return (
     <div className="flex h-full min-h-0 bg-background">
@@ -35,12 +47,12 @@ export function PreferencesPage() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="搜索设置"
+            placeholder={t('prefs.searchSettings')}
             className="h-8 w-full rounded-md border border-border bg-background pr-2.5 pl-8 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
           />
         </label>
 
-        <nav className="flex flex-col gap-0.5" aria-label="设置分类">
+        <nav className="flex flex-col gap-0.5" aria-label={t('prefs.settingsSections')}>
           {visibleSections.map(({ id, label, Icon }) => {
             const active = id === activeId
             return (
@@ -61,7 +73,9 @@ export function PreferencesPage() {
             )
           })}
           {visibleSections.length === 0 ? (
-            <p className="px-2.5 py-2 text-xs text-muted-foreground">没有匹配的分类</p>
+            <p className="px-2.5 py-2 text-xs text-muted-foreground">
+              {t('prefs.noMatchingSections')}
+            </p>
           ) : null}
         </nav>
       </aside>
@@ -69,13 +83,17 @@ export function PreferencesPage() {
       <div className="min-h-0 min-w-0 flex-1 overflow-y-auto p-6">
         {activeId === 'general' ? (
           <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">General</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t('prefs.sectionGeneral')}
+            </h1>
             <GeneralPane />
           </div>
         ) : null}
         {activeId === 'system' ? (
           <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">System</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t('prefs.sectionSystem')}
+            </h1>
             <SystemPane />
           </div>
         ) : null}

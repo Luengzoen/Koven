@@ -1,13 +1,16 @@
 import type { TaskStatus } from '@renderer/shell/sidebar/mock-projects'
+import { useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
 import { LoaderCircleIcon } from 'lucide-react'
 
 export function TaskStatusSlot({ status }: { status: TaskStatus }) {
+  const t = useT()
+
   if (status === 'loading') {
     return (
       <LoaderCircleIcon
         className="size-3.5 shrink-0 animate-spin text-muted-foreground"
-        aria-label="进行中"
+        aria-label={t('nav.statusInProgress')}
       />
     )
   }
@@ -20,7 +23,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
           'bg-success/15 text-success'
         )}
       >
-        完成
+        {t('nav.statusDone')}
       </span>
     )
   }
@@ -33,7 +36,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
           'bg-danger/15 text-danger'
         )}
       >
-        失败
+        {t('nav.statusFailed')}
       </span>
     )
   }

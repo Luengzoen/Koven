@@ -108,4 +108,4 @@ IPC 三端齐套由 `scripts/check-capability-sync.mjs` 门禁（并进 `npm run
 - `main.css` 只放入口与 token。
 - 注册表因 import 行数接近 200 时按域再拆，仍无业务逻辑。
 
-当前包：`shell`（快照 + 最大化状态）、`preferences`（偏好 JSON）、`app-info`（关于用的 name/version）。
+当前包：`shell`（快照 + 最大化状态）、`preferences`（偏好 JSON）、`app-info`（关于用的 name/version）、`fs-browser`（根列 / 卷 / 单层列举+缓存 / 详情 / 路径解析 / 文件图标含 `.lnk`；**不做**默认整盘 MFT；渲染侧可复用 `FileBrowser`，工作空间 Popover 等场景嵌入）。

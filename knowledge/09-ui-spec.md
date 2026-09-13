@@ -16,7 +16,7 @@
 - 布局用 `flex` + `gap-*`，**不用** `space-x-*` / `space-y-*`
 - 宽高相等用 `size-*`，不用同时写 `w-* h-*`
 - 条件 class 用 `cn()`，不要手写长模板字符串三元
-- 覆盖层（Dialog / Dropdown）不要手写抢 z-index；跟 Radix Portal
+- 覆盖层（Dialog / Dropdown / Popover）Portal Content **统一 `z-50`**；不要另起随机 z-index 战争。KeepAlive 当前页**禁止** `z-10`（会压住 body Portal）
 - 按钮要 `cursor-pointer`（v4 Preflight 默认是箭头）
 - 图标在按钮内用组件上的 `[&_svg]:size-4`，不要在每个图标上堆 `size-4`
 - **默认不可拖选**：`main.css` 全局 `user-select: none`（输入框 / textarea / contenteditable 仍可拖选）。聊天消息、关于文案等需要复制的区域再加 Tailwind `select-text`
@@ -27,9 +27,10 @@
 | 场景 | 用什么 | 约定 |
 |---|---|---|
 | 按钮 | `Button`（Slot + cva） | default / outline / ghost 为主；`primary` 属功能色，仅明确要求时用；icon 用 `size="icon"` |
-| 对话框 | `Dialog` | 必须有 `DialogTitle`（可视或 `sr-only`）；关闭钮要有「关闭」可读名称；关于用居中紧凑布局。首选项是主区导航页，不用 Dialog |
+| 对话框 | `Dialog` | Overlay/Content 带 `z-50`；必须有 `DialogTitle`（可视或 `sr-only`）；关闭钮要有「关闭」可读名称；关于用居中紧凑布局。首选项是主区导航页，不用 Dialog |
 | 页面顶栏 | `PageTopbar` | 侧栏按钮固定；居中 `AppPage.title`；返回由 `chrome.showBack` 开关（箭头 + 上一页 title，无 title 则仅箭头） |
-| 菜单 | `DropdownMenu` | `Item` 放在 `Group` 里；危险项以后用独立约定，不要 `window.confirm` |
+| 菜单 | `DropdownMenu` | `Item` 放在 `Group` 里；Content 带 `z-50`；危险项以后用独立约定，不要 `window.confirm` |
+| 锚点面板 | `Popover` | 可嵌复杂交互（如文件分栏选择器）；Content 带 `z-50`；不要用 Dropdown 塞大块可点内容 |
 | 分割线 | `Separator` | 不要手写 `hr` 或 `border-t` 当语义分割 |
 | 滑条 | `Slider` | 离散刻度 + 胶囊拇指；下方稀疏标签（如字号「小/默认/大」）；轨道用 `foreground`/`border` 等语义色适配明暗 |
 | 开关 | `Switch` | 二态；未选中在左、选中在右；轨道始终灰色激活底（`muted-foreground/40`，双主题），圆点样式不变 |

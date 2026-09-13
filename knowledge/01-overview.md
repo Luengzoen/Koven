@@ -11,7 +11,7 @@
 | 名称 | Koven |
 | 形态 | Windows-only Electron 桌面应用 |
 | 定位 | 可运行的桌面壳；业务从零开始，先固定安全模型与落盘隔离 |
-| 当前阶段 | 壳 UI（侧栏 / topbar / 托盘）+ A/B JSON 持久化已跑通；无真实业务数据 |
+| 当前阶段 | 壳 UI + A/B JSON 持久化 + 新建项目 Prompt + 分栏文件选择器（`fs-browser`）已跑通；尚无真实业务数据 |
 | 关键约定 | 仅 Windows（AGENTS.md 铁律 11）；渲染进程无 Node（铁律 12）；文件不出项目目录（铁律 1）；增量走能力包（`10-architecture.md`） |
 
 ## 2. 技术栈
@@ -32,7 +32,7 @@
 
 - **Electron 44.2.0**（Chromium 152 / Node 24）
 - **React 19** + **TypeScript 5** strict（`tsconfig.node.json` / `tsconfig.web.json`）
-- Radix：`@radix-ui/react-slot` / `dialog` / `dropdown-menu` / `separator` + **cva** + **clsx** + **tailwind-merge**（`cn()`）
+- Radix：`@radix-ui/react-slot` / `dialog` / `dropdown-menu` / `popover` / `separator` + **cva** + **clsx** + **tailwind-merge**（`cn()`）
 - **lucide-react**（图标，禁止为常规图标手写 SVG）
 - `@electron-toolkit/utils`、`@electron-toolkit/tsconfig`；入口隔离 `scripts/confine.js`
 
@@ -72,8 +72,9 @@ D:\Desktop\Koven
 │       ├── app/App.tsx        # 只挂壳
 │       ├── shell/             # 标题栏、侧栏、keepalive、会话 hydrate
 │       ├── routes.ts
-│       ├── capabilities/      # preferences / app-info（关于）
+│       ├── capabilities/      # preferences / app-info / new-project
 │       ├── components/ui/
+│       ├── components/fs-browser/  # 可复用分栏选择容器
 │       ├── lib/cn.ts
 │       └── assets/            # main.css、koven.png
 ├── build/koven.ico

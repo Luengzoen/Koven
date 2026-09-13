@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
 import { Slider } from '@renderer/components/ui/slider'
+import { cn } from '@renderer/lib/cn'
 import { applyTypography } from '@renderer/shell/apply-typography'
 import { usePreferencesStore } from '@renderer/shell/preferences-store'
 import { useT } from '@renderer/shell/use-t'
@@ -18,7 +19,7 @@ import {
   type FontSizeId,
   type LocaleId
 } from '@shared/capabilities/preferences'
-import { ChevronDownIcon } from 'lucide-react'
+import { CheckIcon, ChevronDownIcon } from 'lucide-react'
 
 const fontSizeIndex: Record<FontSizeId, number> = {
   xs: 0,
@@ -90,24 +91,34 @@ export function GeneralPane() {
             control={
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="min-w-32 justify-between font-normal">
+                  <Button
+                    variant="outline"
+                    className="group min-w-32 justify-between gap-2 font-normal"
+                  >
                     <span style={{ fontFamily: fontCss(general.fontFamily) }}>
                       {fontLabel(general.fontFamily)}
                     </span>
-                    <ChevronDownIcon />
+                    <ChevronDownIcon className="size-3.5 text-muted-foreground transition-transform duration-300 ease-out group-data-[state=open]:rotate-180" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-36">
                   <DropdownMenuGroup>
-                    {fontFamilyOptions.map((entry) => (
-                      <DropdownMenuItem
-                        key={entry.id}
-                        onSelect={() => selectFontFamily(entry.id)}
-                        style={{ fontFamily: entry.cssFamily }}
-                      >
-                        {entry.label}
-                      </DropdownMenuItem>
-                    ))}
+                    {fontFamilyOptions.map((entry) => {
+                      const selected = entry.id === general.fontFamily
+                      return (
+                        <DropdownMenuItem
+                          key={entry.id}
+                          onSelect={() => selectFontFamily(entry.id)}
+                          style={{ fontFamily: entry.cssFamily }}
+                        >
+                          <span className="flex-1">{entry.label}</span>
+                          <CheckIcon
+                            className={cn('size-4', selected ? 'opacity-100' : 'opacity-0')}
+                            aria-hidden
+                          />
+                        </DropdownMenuItem>
+                      )
+                    })}
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -136,21 +147,31 @@ export function GeneralPane() {
             control={
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="min-w-32 justify-between font-normal">
+                  <Button
+                    variant="outline"
+                    className="group min-w-32 justify-between gap-2 font-normal"
+                  >
                     <span>{t(localeLabel)}</span>
-                    <ChevronDownIcon />
+                    <ChevronDownIcon className="size-3.5 text-muted-foreground transition-transform duration-300 ease-out group-data-[state=open]:rotate-180" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-36">
                   <DropdownMenuGroup>
-                    {localeOptions.map((entry) => (
-                      <DropdownMenuItem
-                        key={entry.id}
-                        onSelect={() => selectLocale(entry.id)}
-                      >
-                        {t(entry.labelKey)}
-                      </DropdownMenuItem>
-                    ))}
+                    {localeOptions.map((entry) => {
+                      const selected = entry.id === locale
+                      return (
+                        <DropdownMenuItem
+                          key={entry.id}
+                          onSelect={() => selectLocale(entry.id)}
+                        >
+                          <span className="flex-1">{t(entry.labelKey)}</span>
+                          <CheckIcon
+                            className={cn('size-4', selected ? 'opacity-100' : 'opacity-0')}
+                            aria-hidden
+                          />
+                        </DropdownMenuItem>
+                      )
+                    })}
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>

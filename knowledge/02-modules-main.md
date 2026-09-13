@@ -59,3 +59,26 @@
 | `preferences:get` | `preferencesIpc.get` | 读偏好 JSON |
 | `preferences:set` | `preferencesIpc.set` | 合并写 theme/locale/general（只落盘，不改 WCO）；locale 变更时重建托盘菜单 |
 | `preferences:apply-theme` | `preferencesIpc.applyTheme` | 渲染 → main（`send`）：立刻改 themeSource + WCO；主题扩散圆碰到右上角时再调 |
+| `fs-browser:list-roots` | `fsBrowserIpc.listRoots` | 根列：当前用户目录（用户名）/文档/图片/下载/桌面/此电脑（`app.getPath` Known Folder） |
+| `fs-browser:list-volumes` | `fsBrowserIpc.listVolumes` | 枚举本机可读逻辑卷（「此电脑」子列） |
+| `fs-browser:list-directory` | `fsBrowserIpc.listDirectory` | 单层目录列举 + 短 TTL 缓存；`::this-pc` 返回卷列表 |
+| `fs-browser:get-entry-detail` | `fsBrowserIpc.getEntryDetail` | 聚焦项详情（大小/时间/卷容量等） |
+| `fs-browser:resolve-path` | `fsBrowserIpc.resolvePath` | 解析绝对路径为可展开列链 |
+| `fs-browser:get-file-icon` | `fsBrowserIpc.getFileIcon` | 文件图标 PNG data URL；`.lnk` 先 `readShortcutLink` 再对 icon/target 取图标（避免通用快捷方式白纸图标） |
+
+### fs-browser 与 MFT
+
+分栏（Miller columns）每次只需要**当前列的一层子项**。整盘扫 `$MFT` 对这种 UI 收益小，且读 `\\.\C:` / 解析 MFT 通常要管理员或备份特权，不适合默认桌面进程。
+
+当前策略（性能优先且免提权）：
+
+1. `readdir({ withFileTypes: true })` 列一层（Windows 上走大缓冲目录查询路径）
+2. 目录 mtime + LRU/TTL 缓存命中则不重读
+3. 详情按聚焦懒加载（`stat` / `statfs`），列表不批量 `stat`
+4. **不做**默认整盘 MFT 索引；若以后要「全局秒搜」，再评估提权助手 / USN Journal / 可选 Everything SDK，另开能力包
+5. 隐藏项：`dir` 点前缀 + PowerShell 读 Windows `Hidden` 属性；默认列举时可见并降不透明度
+6. `.lnk`：展示名去掉后缀；图标经 `get-file-icon`（`readShortcutLink` → icon/target，禁止对 lnk 路径直接 `getFileIcon`）
+
+主进程实现目录：`src/main/capabilities/fs-browser/`（`list-roots` / `list-directory` / `list-volumes` / `get-entry-detail` / `resolve-path` / `get-file-icon` / `windows-hidden` / `directory-cache`）。
+
+UI 容器在渲染进程 `components/fs-browser/FileBrowser`，可嵌页面 / Dialog / Popover。关键入参含 `title` / `mode` / `maxCount` / `accept` / `value`+`initialPath`（回传选中并对齐分栏）等，见 `file-browser-types.ts`。

@@ -114,4 +114,22 @@
 
 - **现象**：热更新（尤其改 `catalog` / `routes`）后，点概览或其它导航，顶栏或内容仍像停在首页；重启 `npm run dev` 又正常。
 - **根因**：Vite HMR 重建了 `useNavigationStore`，侧栏与 `KeepAliveOutlet` 可能短时间各绑不同 store 实例；叠加 `invisible` 叠层时，后访问的不透明页也可能盖住当前页。
-- **修复**：`navigation-store.ts` 用 `import.meta.hot.data` 复用同一 store；`KeepAliveOutlet` 非当前页用 `hidden` + 当前页 `z-10`，避免叠层穿透。
+- **修复**：`navigation-store.ts` 用 `import.meta.hot.data` 复用同一 store；`KeepAliveOutlet` 非当前页用 `hidden`。
+
+## 坑 19：设置页 Dropdown「可点却看不见」
+
+- **现象**：首选项等页点开下拉，键盘/点击能选中，但屏幕上看不见菜单（或只剩残影）。
+- **根因**：① KeepAlive 当前页曾加 `z-10`，盖住挂到 `body` 的 Radix Portal；② Dialog/Dropdown Content 缺明确 `z-50`；③ 主题圆形扩散残留遮罩（`pointer-events-none` 的全屏层）挡住视线。
+- **修复**：当前页不加 `z-10`；Portal 内容统一 `z-50`；主题切换后（及 AppShell 挂载时）调 `cleanupThemeCircleArtifacts()`。
+
+## 坑 20：`.lnk` 直接 `getFileIcon` 得到白纸+箭头
+
+- **现象**：分栏里快捷方式显示通用文档图标，而不是目标程序图标。
+- **根因**：对 `.lnk` 路径调 `app.getFileIcon` 往往只拿到快捷方式壳图标。
+- **修复**：`fs-browser:get-file-icon` 先 `shell.readShortcutLink`，再对 `icon` / `target` 取图标；展示名去掉 `.lnk` 后缀。
+
+## 坑 21：暗色主题下分栏「伪选中」完全看不见
+
+- **现象**：路径链父级（此电脑 / C: 等）逻辑上已是打开态，但行背景与周围一样。
+- **根因**：暗色 token 里 `--muted` 与 `--card` 同为 `#18181b`；在 `bg-card` 上写 `bg-muted` 等于没高亮。不是 HMR/重启问题。
+- **修复**：分栏行的聚焦 / 选中 / 路径链伪选中统一用 `bg-accent`（`#27272a`）。

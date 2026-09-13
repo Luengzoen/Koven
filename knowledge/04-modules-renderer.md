@@ -18,13 +18,13 @@
 | `src/renderer/src/shell/shell-layout-store.ts` | 侧栏开合与宽度（默认/最小 250，最大 600；收起不改宽度） |
 | `src/renderer/src/shell/navigation-store.ts` | `activeId` / `sidebarSelectedId` / `backStack` / `openFromSidebar` / `open` / `back` |
 | `src/renderer/src/shell/create-navigation-store.ts` | 导航 store 工厂（含返回栈；不落盘） |
-| `src/renderer/src/shell/keep-alive-outlet.tsx` | 已访问页保活（隐藏非当前页） |
+| `src/renderer/src/shell/keep-alive-outlet.tsx` | 已访问页保活（非当前页 `hidden`；**当前页不加 z-10**，以免压住 Dropdown Portal） |
 | `src/renderer/src/shell/session-persistence.ts` | hydrate + 写回 shell/preferences |
 | `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（字体族·字号·关闭行为落盘；语言驱动 `useT`） |
 | `src/renderer/src/shell/use-t.ts` | 订阅 `locale`，返回 `t(key)` |
 | `src/renderer/src/shell/use-document-lang.ts` | 同步 `html[lang]` |
 | `src/renderer/src/shell/theme-resolve.ts` | `ThemePreference` → 实际 light/dark |
-| `src/renderer/src/shell/apply-theme.ts` | 写 `html.dark`；可选圆形外扩 VT |
+| `src/renderer/src/shell/apply-theme.ts` | 写 `html.dark`；可选圆形外扩；`cleanupThemeCircleArtifacts` 清残留遮罩 |
 | `src/renderer/src/shell/apply-typography.ts` | 写 `--font-scale` / `--font-sans-family` |
 | `src/renderer/src/shell/use-theme-sync.ts` | 订阅偏好与系统配色，无动画同步 |
 | `src/renderer/src/components/ui/theme-segment.tsx` | 三档主题 segment（系统/浅/深） |
@@ -33,7 +33,7 @@
 | `src/renderer/src/assets/koven.png` | logo |
 | `src/renderer/src/capabilities/preferences/` | 首选项导航页（General / System；内部分类经壳快照持久化） |
 | `src/renderer/src/capabilities/app-info/` | 关于对话框 |
-| `src/renderer/src/capabilities/new-project/` | 新建项目页：居中标题 + Prompt（模式菜单 / 回形针 / 底栏工作空间·权限占位；随内容撑高至 500px） |
+| `src/renderer/src/capabilities/new-project/` | 新建项目页：居中标题 + Prompt（模式菜单 / 回形针 / 底栏工作空间 Popover 分栏选择 · 权限占位；随内容撑高至 500px） |
 
 CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）；`connect-src` 含 `ws:`/`wss:`（HMR）。收紧 CSP 时先读 `08-pitfalls.md`。
 
@@ -47,16 +47,19 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 |---|---|
 | `components/ui/button.tsx` | Radix `Slot` + `cva`（含 primary） |
 | `components/ui/dialog.tsx` | `@radix-ui/react-dialog` |
-| `components/ui/dropdown-menu.tsx` | `@radix-ui/react-dropdown-menu` |
+| `components/ui/dropdown-menu.tsx` | `@radix-ui/react-dropdown-menu`（Content 须 `z-50`） |
 | `components/ui/separator.tsx` | `@radix-ui/react-separator` |
 | `components/ui/theme-segment.tsx` | 主题三档 segment |
 | `components/ui/slider.tsx` | 离散档位 range 滑条 |
 | `components/ui/switch.tsx` | 二态开关（左关右开） |
 | `components/ui/focus-frame.tsx` | 编辑框 0.5px focus 发丝亮边容器（`input`/`textarea` 必包） |
 | `components/ui/search-field.tsx` | 搜索框 + 自绘清除钮（替代原生 clear） |
+| `components/ui/popover.tsx` | `@radix-ui/react-popover`（Content `z-50`；可嵌复杂内容） |
+| `components/fs-browser/` | 访达式分栏选择：`FileBrowser` + 前往栏 + 开合图标 + `.lnk` 壳图标；列数变深时横向滚到最右；路径链祖先伪选中用 `bg-accent`（暗色 `muted===card`，勿用 `bg-muted`）并纵向滚入可视；入参见 `file-browser-types.ts` |
 | `lib/cn.ts` | `clsx` + `tailwind-merge` |
 | `capabilities/preferences/` | 首选项导航页（General / System） |
 | `capabilities/app-info/` | 关于对话框 |
+| `capabilities/new-project/` | 新建项目 + Prompt；「选择工作空间」Popover 每次打开重挂载 `FileBrowser`（`value`+`initialPath` 回传对齐） |
 
 新增可复用控件放 `components/ui/`；页面与业务组合放 `capabilities/<name>/`。壳导航与侧栏放 `shell/`。规范见 `09-ui-spec.md`、`10-architecture.md`。
 

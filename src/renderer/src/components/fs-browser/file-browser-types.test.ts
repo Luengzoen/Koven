@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { entryIsSelectable, parseAcceptExtensions } from './file-browser-types'
+import {
+  entryCanDrill,
+  entryIsSelectable,
+  parseAcceptExtensions
+} from './file-browser-types'
 
 describe('parseAcceptExtensions', () => {
   it('parses semicolon patterns', () => {
@@ -43,6 +47,51 @@ describe('entryIsSelectable', () => {
     expect(entryIsSelectable(file, 'file', accept)).toBe(true)
     expect(
       entryIsSelectable({ ...file, extension: 'txt', name: 'b.txt' }, 'file', accept)
+    ).toBe(false)
+  })
+})
+
+describe('entryCanDrill', () => {
+  it('allows volume / directory / this-pc, not file', () => {
+    expect(
+      entryCanDrill({
+        path: 'C:\\',
+        name: 'C:',
+        kind: 'volume',
+        extension: '',
+        isHidden: false,
+        isSystem: false
+      })
+    ).toBe(true)
+    expect(
+      entryCanDrill({
+        path: 'C:\\a',
+        name: 'a',
+        kind: 'directory',
+        extension: '',
+        isHidden: false,
+        isSystem: false
+      })
+    ).toBe(true)
+    expect(
+      entryCanDrill({
+        path: '::this-pc',
+        name: 'This PC',
+        kind: 'this-pc',
+        extension: '',
+        isHidden: false,
+        isSystem: false
+      })
+    ).toBe(true)
+    expect(
+      entryCanDrill({
+        path: 'C:\\a\\b.png',
+        name: 'b.png',
+        kind: 'file',
+        extension: 'png',
+        isHidden: false,
+        isSystem: false
+      })
     ).toBe(false)
   })
 })

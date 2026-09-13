@@ -47,19 +47,20 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 |---|---|
 | `components/ui/button.tsx` | Radix `Slot` + `cva`（含 primary） |
 | `components/ui/dialog.tsx` | `@radix-ui/react-dialog` |
-| `components/ui/dropdown-menu.tsx` | `@radix-ui/react-dropdown-menu`（Content 须 `z-50`） |
+| `components/ui/dropdown-menu.tsx` | `@radix-ui/react-dropdown-menu`（Content 须 `z-50`；统一 `koven-menu-in/out` 进出场） |
+| `components/ui/tooltip.tsx` | `@radix-ui/react-tooltip`（壳层 `TooltipProvider`；Content `z-50`） |
 | `components/ui/separator.tsx` | `@radix-ui/react-separator` |
 | `components/ui/theme-segment.tsx` | 主题三档 segment |
 | `components/ui/slider.tsx` | 离散档位 range 滑条 |
 | `components/ui/switch.tsx` | 二态开关（左关右开） |
 | `components/ui/focus-frame.tsx` | 编辑框 0.5px focus 发丝亮边容器（`input`/`textarea` 必包） |
 | `components/ui/search-field.tsx` | 搜索框 + 自绘清除钮（替代原生 clear） |
-| `components/ui/popover.tsx` | `@radix-ui/react-popover`（Content `z-50`；可嵌复杂内容） |
-| `components/fs-browser/` | 访达式分栏选择：`FileBrowser` + 前往栏 + 开合图标 + `.lnk` 壳图标；列数变深时横向滚到最右；路径链祖先伪选中用 `bg-accent`（暗色 `muted===card`，勿用 `bg-muted`）并纵向滚入可视；入参见 `file-browser-types.ts` |
+| `components/ui/popover.tsx` | `@radix-ui/react-popover`（Content `z-50`；轻微弹性 `koven-popover-in/out`；可嵌复杂内容） |
+| `components/fs-browser/` | 访达式分栏选择：`FileBrowser` + 前往栏 + 开合图标 + `.lnk` 壳图标；可下钻项（目录/卷/此电脑）行尾右箭头；悬停 Tooltip 显示全路径（「此电脑」用 i18n 名）；列数变深时横向滚到最右；路径链祖先伪选中用 `bg-accent`（暗色 `muted===card`，勿用 `bg-muted`）并纵向滚入可视；入参见 `file-browser-types.ts` |
 | `lib/cn.ts` | `clsx` + `tailwind-merge` |
 | `capabilities/preferences/` | 首选项导航页（General / System） |
 | `capabilities/app-info/` | 关于对话框 |
-| `capabilities/new-project/` | 新建项目 + Prompt；「选择工作空间」Popover 每次打开重挂载 `FileBrowser`（`value`+`initialPath` 回传对齐） |
+| `capabilities/new-project/` | 新建项目 + Prompt；「选择工作空间」Popover 随 Content 生命周期重挂 `FileBrowser`（勿用 `open` 条件提前拆掉，否则关闭动画只剩底栏）；`value`+`initialPath` 回传对齐 |
 
 新增可复用控件放 `components/ui/`；页面与业务组合放 `capabilities/<name>/`。壳导航与侧栏放 `shell/`。规范见 `09-ui-spec.md`、`10-architecture.md`。
 

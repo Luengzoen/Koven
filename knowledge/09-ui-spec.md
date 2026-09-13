@@ -29,12 +29,13 @@
 | 按钮 | `Button`（Slot + cva） | default / outline / ghost 为主；`primary` 属功能色，仅明确要求时用；icon 用 `size="icon"` |
 | 对话框 | `Dialog` | Overlay/Content 带 `z-50`；必须有 `DialogTitle`（可视或 `sr-only`）；关闭钮要有「关闭」可读名称；关于用居中紧凑布局。首选项是主区导航页，不用 Dialog |
 | 页面顶栏 | `PageTopbar` | 侧栏按钮固定；居中 `AppPage.title`；返回由 `chrome.showBack` 开关（箭头 + 上一页 title，无 title 则仅箭头） |
-| 菜单 | `DropdownMenu` | `Item` 放在 `Group` 里；Content 带 `z-50`；危险项以后用独立约定，不要 `window.confirm` |
-| 锚点面板 | `Popover` | 可嵌复杂交互（如文件分栏选择器）；Content 带 `z-50`；不要用 Dropdown 塞大块可点内容 |
+| 菜单 | `DropdownMenu` | `Item` 放在 `Group` 里；Content 带 `z-50`；进出场动画写在 `components/ui/dropdown-menu`（`koven-menu-in/out`），业务侧勿再各自加一套；危险项以后用独立约定，不要 `window.confirm` |
+| 提示 | `Tooltip` | 图标钮 / 截断路径等悬停说明；文案走 i18n；壳层包一层 `TooltipProvider`；Content 带 `z-50`；禁用钮外包一层可悬停元素 |
+| 锚点面板 | `Popover` | 可嵌复杂交互（如文件分栏选择器）；Content 带 `z-50`；轻微弹性缩放写在 `components/ui/popover`（`koven-popover-in/out`）；四边轻阴影用 `--shadow-popover`（明暗各一套）；业务侧勿再各自加一套；不要用 Dropdown 塞大块可点内容 |
 | 分割线 | `Separator` | 不要手写 `hr` 或 `border-t` 当语义分割 |
 | 滑条 | `Slider` | 离散刻度 + 胶囊拇指；下方稀疏标签（如字号「小/默认/大」）；轨道用 `foreground`/`border` 等语义色适配明暗 |
 | 开关 | `Switch` | 二态；未选中在左、选中在右；轨道始终灰色激活底（`muted-foreground/40`，双主题），圆点样式不变 |
-| 编辑框容器 | `FocusFrame` | **凡 `input` / `textarea` 必包一层**。常态 1px `border`；`:focus-within` 时缓入 0.5px 亮边（`scale(0.5)`），失焦缓出。圆角用 `radius`（`md`/`lg`/`xl`/`composer`），禁再手写 focus ring |
+| 编辑框容器 | `FocusFrame` | **凡 `input` / `textarea` 必包一层**。常态 1px `border`；`:focus-within` 时缓入 0.5px 亮边（`scale(0.5)`）+ 四边轻外发光（`--shadow-focus-glow`），失焦缓出。圆角用 `radius`（`md`/`lg`/`xl`/`composer`），禁再手写 focus ring |
 | 搜索框 | `SearchField` | 带自绘清除钮（`cursor-pointer`）；隐藏原生 clear。新搜索框用本组件，勿裸写 `type="search"` |
 
 新增 primitive：先加 Radix 包装到 `components/ui/`，页面只组合，不把 Overlay/Portal 散落在业务文件里。本地离散控件（如 Slider）也可放 `components/ui/`，不强制上 Radix。

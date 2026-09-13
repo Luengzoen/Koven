@@ -23,7 +23,7 @@ type FocusFrameProps = {
 
 /**
  * 编辑框容器：常态 1px border；内部控件 :focus-within 时
- * 缓入 0.5px（scale 技巧）亮边，失焦缓出。新输入框一律包这层。
+ * 缓入 0.5px（scale 技巧）亮边 + 四边轻外发光，失焦缓出。新输入框一律包这层。
  */
 export function FocusFrame({
   children,
@@ -35,7 +35,13 @@ export function FocusFrame({
   const pair = radiusPair[radius]
 
   return (
-    <div className={cn('group/focus relative', className)}>
+    <div
+      className={cn(
+        'group/focus relative shadow-none transition-[box-shadow] duration-500 ease-out focus-within:shadow-[var(--shadow-focus-glow)]',
+        pair.frame,
+        className
+      )}
+    >
       <span
         aria-hidden
         className={cn(

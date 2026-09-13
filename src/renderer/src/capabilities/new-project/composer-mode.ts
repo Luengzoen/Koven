@@ -18,6 +18,12 @@ export const composerModeLabelKey: Record<ComposerMode, MessageKey> = {
   ask: 'newProject.modeAsk'
 }
 
+export const composerModeHintKey: Record<ComposerMode, MessageKey> = {
+  agent: 'newProject.modeAgentHint',
+  plan: 'newProject.modePlanHint',
+  ask: 'newProject.modeAskHint'
+}
+
 export const composerModeIcon: Record<ComposerMode, LucideIcon> = {
   agent: InfinityIcon,
   plan: SlidersHorizontalIcon,

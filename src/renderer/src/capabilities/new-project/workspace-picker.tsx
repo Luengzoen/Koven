@@ -89,29 +89,30 @@ export function WorkspacePickerButton({ value, onChange }: WorkspacePickerProps)
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <div className="flex flex-col gap-0">
-          {/* 每次打开重新挂载，用 value + initialPath 回传选中并对齐分栏 */}
-          {open ? (
-            <FileBrowser
-              key={value ?? '__empty__'}
-              title={t('newProject.workspacePickerTitle')}
-              mode="directory"
-              maxCount={1}
-              showDetail
-              height={380}
-              className="rounded-none border-0"
-              value={draft.map((entry) => entry.path)}
-              initialPath={value ?? undefined}
-              onChange={setDraft}
-              onConfirm={async (selection) => {
-                setDraft(selection)
-                if (selection[0]) {
-                  onChange(selection[0].path)
-                  setOpen(false)
-                }
-              }}
-              onCancel={() => setOpen(false)}
-            />
-          ) : null}
+          {/*
+            Content 关闭动画期间仍会挂着：勿用 open 条件拆掉 FileBrowser，
+            否则上半截瞬空、只剩底栏在播收回。整层随 Content 卸挂即可重挂。
+          */}
+          <FileBrowser
+            key={value ?? '__empty__'}
+            title={t('newProject.workspacePickerTitle')}
+            mode="directory"
+            maxCount={1}
+            showDetail
+            height={380}
+            className="rounded-none border-0"
+            value={draft.map((entry) => entry.path)}
+            initialPath={value ?? undefined}
+            onChange={setDraft}
+            onConfirm={async (selection) => {
+              setDraft(selection)
+              if (selection[0]) {
+                onChange(selection[0].path)
+                setOpen(false)
+              }
+            }}
+            onCancel={() => setOpen(false)}
+          />
           <div className="flex items-center justify-end gap-2 border-t border-border px-3 py-2">
             <Button
               type="button"

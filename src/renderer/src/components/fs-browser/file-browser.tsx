@@ -2,6 +2,7 @@
 import { DetailPane } from '@renderer/components/fs-browser/detail-pane'
 import { expandColumnsToPath } from '@renderer/components/fs-browser/expand-to-path'
 import {
+  entryCanDrill,
   entryIsSelectable,
   type FileBrowserProps
 } from '@renderer/components/fs-browser/file-browser-types'
@@ -19,14 +20,6 @@ import {
   type FsBrowserListEntry
 } from '@shared/capabilities/fs-browser'
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
-
-function canDrill(entry: FsBrowserListEntry): boolean {
-  return (
-    entry.kind === 'volume' ||
-    entry.kind === 'directory' ||
-    entry.kind === 'this-pc'
-  )
-}
 
 function displayPathForEntry(entry: FsBrowserListEntry | null): string {
   if (!entry) return ''
@@ -177,7 +170,7 @@ export function FileBrowser({
     if (disabled) return
     setFocused(entry)
     setValidationMessage(null)
-    if (!canDrill(entry)) return
+    if (!entryCanDrill(entry)) return
 
     const kept = columns.slice(0, columnIndex + 1)
     setColumns([...kept, { path: entry.path, entries: [], loading: true }])
@@ -237,7 +230,7 @@ export function FileBrowser({
   }
 
   function handleActivate(entry: FsBrowserListEntry, columnIndex: number) {
-    if (canDrill(entry)) {
+    if (entryCanDrill(entry)) {
       void openEntry(entry, columnIndex)
       return
     }
@@ -335,7 +328,7 @@ export function FileBrowser({
                 }
 
                 setFocused(entry)
-                if (canDrill(entry)) {
+                if (entryCanDrill(entry)) {
                   void openEntry(entry, index)
                 } else {
                   setColumns((prev) => prev.slice(0, index + 1))

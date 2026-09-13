@@ -26,7 +26,8 @@ function DropdownMenuContent({
         side={side}
         sideOffset={sideOffset}
         className={cn(
-          'z-50 min-w-40 rounded-lg border border-border bg-card p-1 shadow-lg outline-none',
+          'z-50 min-w-40 origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-lg border border-border bg-card p-1 shadow-lg outline-none',
+          'data-[state=open]:animate-koven-menu-in data-[state=closed]:animate-koven-menu-out',
           className
         )}
         {...props}

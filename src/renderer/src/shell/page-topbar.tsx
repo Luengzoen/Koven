@@ -2,8 +2,12 @@ import { getPage, resolvePageTitle } from '@renderer/routes'
 import { useActivePage, useNavigationStore } from '@renderer/shell/navigation-store'
 import { useShellLayoutStore } from '@renderer/shell/shell-layout-store'
 import { useLocale, useT } from '@renderer/shell/use-t'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@renderer/components/ui/tooltip'
 import { ChevronLeftIcon, PanelLeftIcon } from 'lucide-react'
-
 
 export function PageTopbar() {
   const page = useActivePage()
@@ -20,19 +24,27 @@ export function PageTopbar() {
     ? resolvePageTitle(getPage(previousId), locale)
     : undefined
   const pageTitle = resolvePageTitle(page, locale)
+  const sidebarTooltip = sidebarOpen
+    ? t('nav.collapseSidebar')
+    : t('nav.expandSidebar')
 
   return (
     <div className="relative flex h-10 shrink-0 items-center border-b border-border px-2">
       <div className="z-10 flex min-w-0 items-center gap-0.5">
-        <button
-          type="button"
-          aria-label={sidebarOpen ? t('nav.collapseSidebar') : t('nav.expandSidebar')}
-          aria-pressed={sidebarOpen}
-          onClick={toggleSidebar}
-          className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground [&_svg]:size-4"
-        >
-          <PanelLeftIcon />
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              aria-label={sidebarTooltip}
+              aria-pressed={sidebarOpen}
+              onClick={toggleSidebar}
+              className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground [&_svg]:size-4"
+            >
+              <PanelLeftIcon />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">{sidebarTooltip}</TooltipContent>
+        </Tooltip>
 
         {showBack ? (
           <button

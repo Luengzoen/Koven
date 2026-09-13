@@ -26,7 +26,7 @@ function DropdownMenuContent({
         side={side}
         sideOffset={sideOffset}
         className={cn(
-          'min-w-40 rounded-lg border border-border bg-card p-1 shadow-lg outline-none',
+          'z-50 min-w-40 rounded-lg border border-border bg-card p-1 shadow-lg outline-none',
           className
         )}
         {...props}

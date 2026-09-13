@@ -26,6 +26,21 @@ type PortalSnap = {
   rect: DOMRect
 }
 
+function removeThemeCircleLayers(): void {
+  document.querySelectorAll('[data-theme-circle]').forEach((node) => node.remove())
+}
+
+/** 清掉主题扩散残留层，并恢复可能被藏起的 Portal（避免菜单可点却不可见） */
+export function cleanupThemeCircleArtifacts(): void {
+  removeThemeCircleLayers()
+  circleAnimating = false
+  document.querySelectorAll('[data-radix-popper-content-wrapper]').forEach((el) => {
+    if (el instanceof HTMLElement && el.style.visibility === 'hidden') {
+      el.style.visibility = ''
+    }
+  })
+}
+
 function setRootClass(resolved: ResolvedTheme): void {
   document.documentElement.classList.toggle('dark', resolved === 'dark')
 }
@@ -170,7 +185,7 @@ function expandRevealFromPoint(
   apply: () => void,
   onReachSystemChrome?: () => void
 ): void {
-  document.querySelectorAll('[data-theme-circle]').forEach((node) => node.remove())
+  removeThemeCircleLayers()
 
   const portals = snapshotOpenPortals()
   let oldLayer: HTMLElement
@@ -189,6 +204,7 @@ function expandRevealFromPoint(
     setPortalVisibility(portals, false)
     setPortalVisibility(livePortals, false)
   } catch {
+    cleanupThemeCircleArtifacts()
     setPortalVisibility(portals, true)
     setPortalVisibility(livePortals, true)
     apply()
@@ -217,7 +233,7 @@ function expandRevealFromPoint(
     newLayer.remove()
     setPortalVisibility(portals, true)
     setPortalVisibility(livePortals, true)
-    circleAnimating = false
+    cleanupThemeCircleArtifacts()
   }
 
   const startedAt = performance.now()

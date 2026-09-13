@@ -18,7 +18,8 @@ export function KeepAliveOutlet() {
             key={id}
             className={cn(
               'absolute inset-0 overflow-auto',
-              active ? 'z-10' : 'pointer-events-none hidden'
+              // 不用 z-10：会与 body 上的 Radix Portal（Dropdown 等）抢层，导致菜单可点却看不见
+              !active && 'pointer-events-none hidden'
             )}
             aria-hidden={!active}
           >

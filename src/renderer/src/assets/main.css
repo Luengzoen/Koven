@@ -29,6 +29,17 @@
   --scrollbar-thumb: color-mix(in srgb, var(--muted-foreground) 32%, transparent);
   --scrollbar-thumb-hover: color-mix(in srgb, var(--muted-foreground) 52%, transparent);
   --scrollbar-track: transparent;
+  /* Popover：轻量四边环境阴影（少方向偏置） */
+  --shadow-popover:
+    0 0 0 1px color-mix(in srgb, var(--foreground) 4%, transparent),
+    0 0 10px color-mix(in srgb, var(--foreground) 5%, transparent),
+    0 2px 14px color-mix(in srgb, var(--foreground) 6%, transparent),
+    0 8px 28px color-mix(in srgb, var(--foreground) 5%, transparent);
+  /* FocusFrame：聚焦时四边轻外发光（跟 ring） */
+  --shadow-focus-glow:
+    0 0 0 1px color-mix(in srgb, var(--ring) 16%, transparent),
+    0 0 8px color-mix(in srgb, var(--ring) 20%, transparent),
+    0 0 18px color-mix(in srgb, var(--ring) 10%, transparent);
 }
 
 .dark {
@@ -54,6 +65,15 @@
   --info-foreground: #09090b;
   --scrollbar-thumb: color-mix(in srgb, var(--muted-foreground) 38%, transparent);
   --scrollbar-thumb-hover: color-mix(in srgb, var(--muted-foreground) 58%, transparent);
+  --shadow-popover:
+    0 0 0 1px color-mix(in srgb, var(--foreground) 8%, transparent),
+    0 0 12px color-mix(in srgb, #000 36%, transparent),
+    0 4px 18px color-mix(in srgb, #000 40%, transparent),
+    0 12px 36px color-mix(in srgb, #000 32%, transparent);
+  --shadow-focus-glow:
+    0 0 0 1px color-mix(in srgb, var(--ring) 28%, transparent),
+    0 0 10px color-mix(in srgb, var(--ring) 28%, transparent),
+    0 0 22px color-mix(in srgb, var(--ring) 14%, transparent);
 }
 
 @theme inline {
@@ -85,6 +105,56 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
+  /* 覆盖层进出场：菜单轻量缩放；Popover 轻微弹性（由 cubic-bezier 过冲） */
+  --animate-koven-menu-in: koven-menu-in 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-koven-menu-out: koven-menu-out 110ms ease-in both;
+  --animate-koven-popover-in: koven-popover-in 220ms cubic-bezier(0.34, 1.45, 0.64, 1) both;
+  /* 与 in 对称：同终点 scale(0.92)，时长略短；ease 用 in 曲线的时间反转近似 */
+  --animate-koven-popover-out: koven-popover-out 180ms cubic-bezier(0.36, 0, 0.66, -0.45) both;
+}
+
+@keyframes koven-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes koven-menu-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes koven-popover-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes koven-popover-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92);
+  }
 }
 
 html,

@@ -48,6 +48,15 @@ export function entryIsSelectable(
   return accept.has(entry.extension)
 }
 
+/** 可下钻打开下一列（有下级）：卷 / 目录 / 此电脑 */
+export function entryCanDrill(entry: FsBrowserListEntry): boolean {
+  return (
+    entry.kind === 'volume' ||
+    entry.kind === 'directory' ||
+    entry.kind === 'this-pc'
+  )
+}
+
 export type FileBrowserConfirmResult =
   | { ok: true; selection: FsBrowserListEntry[] }
   | { ok: false; reason: 'empty' | 'over-limit' | 'invalid' | 'cancelled'; message?: string }

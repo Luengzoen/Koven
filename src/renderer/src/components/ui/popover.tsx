@@ -28,7 +28,8 @@ function PopoverContent({
         sideOffset={sideOffset}
         align={align}
         className={cn(
-          'z-50 rounded-lg border border-border bg-card shadow-lg outline-none',
+          'z-50 origin-[var(--radix-popover-content-transform-origin)] overflow-hidden rounded-lg border border-border bg-card shadow-[var(--shadow-popover)] outline-none',
+          'data-[state=open]:animate-koven-popover-in data-[state=closed]:animate-koven-popover-out',
           className
         )}
         {...props}

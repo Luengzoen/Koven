@@ -1,4 +1,5 @@
 import {
+  composerModeHintKey,
   composerModeIcon,
   composerModeLabelKey,
   composerModes,
@@ -15,6 +16,11 @@ import {
   DropdownMenuTrigger
 } from '@renderer/components/ui/dropdown-menu'
 import { FocusFrame } from '@renderer/components/ui/focus-frame'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@renderer/components/ui/tooltip'
 import { cn } from '@renderer/lib/cn'
 import { useT } from '@renderer/shell/use-t'
 import {
@@ -105,66 +111,90 @@ export function PromptComposer() {
 
       <div className="flex shrink-0 items-center gap-1 px-3 pt-1 pb-3">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="group h-8 gap-1.5 rounded-lg bg-muted px-2.5 text-foreground hover:bg-accent"
-              aria-label={t('newProject.modeMenu')}
-            >
-              <ModeIcon className="size-3.5 text-muted-foreground" />
-              <span className="text-sm">{modeLabel}</span>
-              <ChevronDownIcon className="size-3.5 text-muted-foreground transition-transform duration-300 ease-out group-data-[state=open]:rotate-180" />
-            </Button>
-          </DropdownMenuTrigger>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="group h-8 gap-1.5 rounded-lg bg-muted px-2.5 text-foreground hover:bg-accent"
+                  aria-label={t('newProject.modeMenu')}
+                >
+                  <ModeIcon className="size-3.5 text-muted-foreground" />
+                  <span className="text-sm">{modeLabel}</span>
+                  <ChevronDownIcon className="size-3.5 text-muted-foreground transition-transform duration-300 ease-out group-data-[state=open]:rotate-180" />
+                </Button>
+              </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent side="top">{t('newProject.modeMenu')}</TooltipContent>
+          </Tooltip>
           <DropdownMenuContent side="top" align="start" className="min-w-40">
             <DropdownMenuGroup>
               {composerModes.map((id) => {
                 const selected = id === mode
                 const ItemIcon = composerModeIcon[id]
                 return (
-                  <DropdownMenuItem key={id} onSelect={() => setMode(id)}>
-                    <ItemIcon className="size-4 text-muted-foreground" />
-                    <span className="flex-1">{t(composerModeLabelKey[id])}</span>
-                    <CheckIcon
-                      className={cn('size-4', selected ? 'opacity-100' : 'opacity-0')}
-                      aria-hidden
-                    />
-                  </DropdownMenuItem>
+                  <Tooltip key={id}>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuItem onSelect={() => setMode(id)}>
+                        <ItemIcon className="size-4 text-muted-foreground" />
+                        <span className="flex-1">{t(composerModeLabelKey[id])}</span>
+                        <CheckIcon
+                          className={cn('size-4', selected ? 'opacity-100' : 'opacity-0')}
+                          aria-hidden
+                        />
+                      </DropdownMenuItem>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      {t(composerModeHintKey[id])}
+                    </TooltipContent>
+                  </Tooltip>
                 )
               })}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="size-8 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
-          aria-label={t('newProject.attachFile')}
-        >
-          <PaperclipIcon />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-8 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
+              aria-label={t('newProject.attachFile')}
+            >
+              <PaperclipIcon />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top">{t('newProject.attachFile')}</TooltipContent>
+        </Tooltip>
 
         <div className="min-w-0 flex-1" />
 
-        <button
-          type="button"
-          disabled={!canSend}
-          onClick={handleSend}
-          aria-label={t('newProject.send')}
-          className={cn(
-            'inline-flex size-8 cursor-pointer items-center justify-center rounded-lg outline-none transition-colors',
-            'focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default',
-            canSend
-              ? 'bg-foreground text-background hover:opacity-90'
-              : 'bg-border text-muted-foreground disabled:opacity-100'
-          )}
-        >
-          <ArrowUpIcon className="size-4" />
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="inline-flex">
+              <button
+                type="button"
+                disabled={!canSend}
+                onClick={handleSend}
+                aria-label={t('newProject.send')}
+                className={cn(
+                  'inline-flex size-8 cursor-pointer items-center justify-center rounded-lg outline-none transition-colors',
+                  'focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default',
+                  canSend
+                    ? 'bg-foreground text-background hover:opacity-90'
+                    : 'bg-border text-muted-foreground disabled:pointer-events-none disabled:opacity-100'
+                )}
+              >
+                <ArrowUpIcon className="size-4" />
+              </button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="top">{t('newProject.send')}</TooltipContent>
+        </Tooltip>
       </div>
 
       <ComposerFooter />

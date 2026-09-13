@@ -3,9 +3,9 @@ import type { LocaleId } from './locale'
 export const messageKeys = [
   // A. sidebar / nav
   'nav.sectionOverview',
-  'nav.overview',
-  'nav.recent',
-  'nav.starred',
+  'nav.myKoven',
+  'nav.scheduledTasks',
+  'nav.newProject',
   'nav.sectionProjects',
   'nav.searchPlaceholder',
   'nav.systemSettings',
@@ -30,6 +30,19 @@ export const messageKeys = [
 
   // B. placeholder
   'placeholder.comingSoon',
+
+  // B2. new project composer
+  'newProject.promptPlaceholder',
+  'newProject.promptLabel',
+  'newProject.heroTitle',
+  'newProject.modeMenu',
+  'newProject.modeAgent',
+  'newProject.modePlan',
+  'newProject.modeAsk',
+  'newProject.attachFile',
+  'newProject.send',
+  'newProject.selectWorkspace',
+  'newProject.defaultPermissions',
 
   // C. preferences shell
   'prefs.sectionGeneral',
@@ -80,6 +93,7 @@ export const messageKeys = [
   // G. common
   'common.close',
   'common.search',
+  'common.clear',
 
   // H. main
   'tray.showMainWindow',
@@ -95,9 +109,9 @@ type Catalog = Record<MessageKey, string>
 
 const zhCN: Catalog = {
   'nav.sectionOverview': '概览',
-  'nav.overview': '概览',
-  'nav.recent': '最近',
-  'nav.starred': '收藏',
+  'nav.myKoven': '我的Koven',
+  'nav.scheduledTasks': '定时任务',
+  'nav.newProject': '新建项目',
   'nav.sectionProjects': '项目',
   'nav.searchPlaceholder': '搜索...',
   'nav.systemSettings': '系统设置',
@@ -121,6 +135,18 @@ const zhCN: Catalog = {
   'nav.backTo': '返回{title}',
 
   'placeholder.comingSoon': '页面内容稍后提供',
+
+  'newProject.promptPlaceholder': '需要帮你做些什么？@ 引用文件，/ 调用技能与指令',
+  'newProject.promptLabel': '项目说明',
+  'newProject.heroTitle': 'Koven，为您做些什么？',
+  'newProject.modeMenu': '切换模式',
+  'newProject.modeAgent': '智能体',
+  'newProject.modePlan': '计划',
+  'newProject.modeAsk': '询问',
+  'newProject.attachFile': '附加文件',
+  'newProject.send': '发送',
+  'newProject.selectWorkspace': '选择工作空间',
+  'newProject.defaultPermissions': '默认权限',
 
   'prefs.sectionGeneral': '通用',
   'prefs.sectionSystem': '系统',
@@ -166,6 +192,7 @@ const zhCN: Catalog = {
 
   'common.close': '关闭',
   'common.search': '搜索',
+  'common.clear': '清除',
 
   'tray.showMainWindow': '显示主窗口',
   'tray.settings': '设置',
@@ -177,9 +204,9 @@ const zhCN: Catalog = {
 
 const en: Catalog = {
   'nav.sectionOverview': 'Overview',
-  'nav.overview': 'Overview',
-  'nav.recent': 'Recent',
-  'nav.starred': 'Starred',
+  'nav.myKoven': 'My Koven',
+  'nav.scheduledTasks': 'Scheduled tasks',
+  'nav.newProject': 'New project',
   'nav.sectionProjects': 'Projects',
   'nav.searchPlaceholder': 'Search…',
   'nav.systemSettings': 'System settings',
@@ -203,6 +230,19 @@ const en: Catalog = {
   'nav.backTo': 'Back to {title}',
 
   'placeholder.comingSoon': 'Page content coming soon',
+
+  'newProject.promptPlaceholder':
+    'What can I help you with? @ to mention files, / for skills and commands',
+  'newProject.promptLabel': 'Project prompt',
+  'newProject.heroTitle': 'Koven, what can I do for you?',
+  'newProject.modeMenu': 'Switch mode',
+  'newProject.modeAgent': 'Agent',
+  'newProject.modePlan': 'Plan',
+  'newProject.modeAsk': 'Ask',
+  'newProject.attachFile': 'Attach file',
+  'newProject.send': 'Send',
+  'newProject.selectWorkspace': 'Select workspace',
+  'newProject.defaultPermissions': 'Default permissions',
 
   'prefs.sectionGeneral': 'General',
   'prefs.sectionSystem': 'System',
@@ -248,6 +288,7 @@ const en: Catalog = {
 
   'common.close': 'Close',
   'common.search': 'Search',
+  'common.clear': 'Clear',
 
   'tray.showMainWindow': 'Show main window',
   'tray.settings': 'Settings',

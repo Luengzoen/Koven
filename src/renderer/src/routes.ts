@@ -1,3 +1,4 @@
+import { NewProjectPage } from '@renderer/capabilities/new-project/new-project-page'
 import { PreferencesPage } from '@renderer/capabilities/preferences/preferences-page'
 import { PlaceholderPage } from '@renderer/shell/placeholder-page'
 import { t, type LocaleId, type MessageKey } from '@shared/i18n'
@@ -41,9 +42,13 @@ function taskPage(id: string, title: string): AppPage {
 }
 
 export const overviewPages: readonly AppPage[] = [
-  chromePage('overview:home', 'nav.overview'),
-  chromePage('overview:recent', 'nav.recent'),
-  chromePage('overview:starred', 'nav.starred')
+  chromePage('overview:home', 'nav.myKoven'),
+  chromePage('overview:recent', 'nav.scheduledTasks'),
+  {
+    id: 'overview:starred',
+    titleKey: 'nav.newProject',
+    Page: NewProjectPage
+  }
 ]
 
 export const taskPages: readonly AppPage[] = [

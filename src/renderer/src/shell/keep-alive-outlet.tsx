@@ -16,7 +16,10 @@ export function KeepAliveOutlet() {
         return (
           <div
             key={id}
-            className={cn('absolute inset-0 overflow-auto', !active && 'invisible pointer-events-none')}
+            className={cn(
+              'absolute inset-0 overflow-auto',
+              active ? 'z-10' : 'pointer-events-none hidden'
+            )}
             aria-hidden={!active}
           >
             <Page />

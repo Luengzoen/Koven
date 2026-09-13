@@ -1,11 +1,12 @@
 import { GeneralPane } from '@renderer/capabilities/preferences/general-pane'
 import { usePreferencesNavStore } from '@renderer/capabilities/preferences/preferences-nav-store'
 import { SystemPane } from '@renderer/capabilities/preferences/system-pane'
+import { SearchField } from '@renderer/components/ui/search-field'
 import { useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
 import type { PreferencesSectionId } from '@shared/capabilities/shell'
 import type { MessageKey } from '@shared/i18n'
-import { MonitorIcon, SearchIcon, Settings2Icon } from 'lucide-react'
+import { MonitorIcon, Settings2Icon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 const sectionDefs = [
@@ -41,16 +42,14 @@ export function PreferencesPage() {
   return (
     <div className="flex h-full min-h-0 bg-background">
       <aside className="flex w-56 shrink-0 flex-col gap-3 border-r border-border bg-muted/40 p-3">
-        <label className="relative block">
-          <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={t('prefs.searchSettings')}
-            className="h-8 w-full rounded-md border border-border bg-background pr-2.5 pl-8 text-sm text-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
-          />
-        </label>
+        <SearchField
+          value={query}
+          onChange={setQuery}
+          placeholder={t('prefs.searchSettings')}
+          aria-label={t('prefs.searchSettings')}
+          frameClassName="h-8 bg-background py-0"
+          inputClassName="h-full"
+        />
 
         <nav className="flex flex-col gap-0.5" aria-label={t('prefs.settingsSections')}>
           {visibleSections.map(({ id, label, Icon }) => {

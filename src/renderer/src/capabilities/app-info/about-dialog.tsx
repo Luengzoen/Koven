@@ -69,7 +69,7 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
           <Button variant="outline" className="flex-1" onClick={checkUpdates}>
             {t('about.checkUpdates')}
           </Button>
-          <Button variant="primary" className="flex-1" onClick={() => void copyVersion()}>
+          <Button className="flex-1" onClick={() => void copyVersion()}>
             {t('about.copyVersion')}
             <CornerDownLeftIcon />
           </Button>

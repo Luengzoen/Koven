@@ -19,18 +19,22 @@
 - 覆盖层（Dialog / Dropdown）不要手写抢 z-index；跟 Radix Portal
 - 按钮要 `cursor-pointer`（v4 Preflight 默认是箭头）
 - 图标在按钮内用组件上的 `[&_svg]:size-4`，不要在每个图标上堆 `size-4`
+- **默认不可拖选**：`main.css` 全局 `user-select: none`（输入框 / textarea / contenteditable 仍可拖选）。聊天消息、关于文案等需要复制的区域再加 Tailwind `select-text`
+- **默认 focus 描边**：全局 `:focus:not(:focus-visible) { outline: none }`，去掉鼠标点击后残留的浏览器默认框；键盘导航仍走 `:focus-visible`（控件可再加 `focus-visible:ring-*`）
 
 ## 3. Radix 组合
 
 | 场景 | 用什么 | 约定 |
 |---|---|---|
-| 按钮 | `Button`（Slot + cva） | default / primary / outline / ghost；icon 用 `size="icon"` |
+| 按钮 | `Button`（Slot + cva） | default / outline / ghost 为主；`primary` 属功能色，仅明确要求时用；icon 用 `size="icon"` |
 | 对话框 | `Dialog` | 必须有 `DialogTitle`（可视或 `sr-only`）；关闭钮要有「关闭」可读名称；关于用居中紧凑布局。首选项是主区导航页，不用 Dialog |
 | 页面顶栏 | `PageTopbar` | 侧栏按钮固定；居中 `AppPage.title`；返回由 `chrome.showBack` 开关（箭头 + 上一页 title，无 title 则仅箭头） |
 | 菜单 | `DropdownMenu` | `Item` 放在 `Group` 里；危险项以后用独立约定，不要 `window.confirm` |
 | 分割线 | `Separator` | 不要手写 `hr` 或 `border-t` 当语义分割 |
 | 滑条 | `Slider` | 离散刻度 + 胶囊拇指；下方稀疏标签（如字号「小/默认/大」）；轨道用 `foreground`/`border` 等语义色适配明暗 |
 | 开关 | `Switch` | 二态；未选中在左、选中在右；轨道始终灰色激活底（`muted-foreground/40`，双主题），圆点样式不变 |
+| 编辑框容器 | `FocusFrame` | **凡 `input` / `textarea` 必包一层**。常态 1px `border`；`:focus-within` 时缓入 0.5px 亮边（`scale(0.5)`），失焦缓出。圆角用 `radius`（`md`/`lg`/`xl`/`composer`），禁再手写 focus ring |
+| 搜索框 | `SearchField` | 带自绘清除钮（`cursor-pointer`）；隐藏原生 clear。新搜索框用本组件，勿裸写 `type="search"` |
 
 新增 primitive：先加 Radix 包装到 `components/ui/`，页面只组合，不把 Overlay/Portal 散落在业务文件里。本地离散控件（如 Slider）也可放 `components/ui/`，不强制上 Radix。
 
@@ -53,8 +57,14 @@
 | `border` / `card` / `accent` | 边框、卡片、悬停底 |
 | `titlebar` | 自定义标题栏底（对齐 WCO overlay） |
 | `ring` | 焦点环 |
+| 滚动条（`--scrollbar-*`） | 全局细滚动条：透明轨道、胶囊拇指；明暗各自调拇指透明度 |
 
-语义色（双主题各有值，极个别场景用）：`primary`（工具蓝）、`success`（绿）、`danger`（红）、`warning`（黄）、`info`（常规信息色）。对应 `*-foreground` 为其上文字色。
+**功能色慎用（默认不上）**：`primary` / `success` / `danger` / `warning` / `info` 仅在下列情况使用——
+
+1. 开发者**明确要求**用功能色；或  
+2. **不得不用**（如任务成功/失败状态必须靠颜色传达语义）。
+
+日常 UI（按钮、链接、返回、强调文案、边框）一律用黑白灰语义 token（`foreground` / `muted` / `border` / `accent`…）。token 可留在 `main.css` 备着，**禁止**习惯性给主按钮、返回链、标题点缀上蓝/绿/红。`Button variant="primary"` 同理，默认用 `default` / `outline` / `ghost`。
 
 切换：侧栏「系统设置」菜单内「主题」+ segment；扩散与 WCO 时机见下方「实现禁区」。首次 hydrate / 跟随系统无动画。字体族、五档字号与语言在「首选项 → 通用」可改并落盘（`applyTypography` / `setLocale`）。
 

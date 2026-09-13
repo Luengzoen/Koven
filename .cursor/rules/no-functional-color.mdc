@@ -1,0 +1,12 @@
+---
+description: 除非明确要求或不得不用，禁止上功能色
+alwaysApply: true
+---
+
+# 功能色慎用
+
+除非开发者明确要求，或语义上不得不用（如成功/失败状态），**不要**用 `primary` / `success` / `danger` / `warning` / `info`。
+
+日常界面用黑白灰：`foreground` / `muted` / `border` / `accent` / `card` / `ring`。按钮默认 `default` / `outline` / `ghost`，不要顺手 `variant="primary"`。
+
+细则：`knowledge/09-ui-spec.md` §4「功能色慎用」。

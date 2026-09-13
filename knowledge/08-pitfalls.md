@@ -109,3 +109,9 @@
 - **现象**：上传了旧安装包；或报缺少 token / 无产物 / Release 已存在。
 - **根因**：选包按 `dist/koven-*-setup.exe` 的 **mtime**，不是 `package.json` 版本；目录里留着历史包时，若刚打的包 mtime 不是最新会选错；缺 `GH_TOKEN`、未先 `build:win`、或同 tag 已发过都会失败。
 - **修复**：发版前确认最新一次 `build:win` 已完成；`npm run publish -- --dry-run` 核对文件名与 tag；在项目根 `.env` 写 `GH_TOKEN=`（已 gitignore）或设会话级环境变量；已存在则删 Release/tag 或升版本重打。
+
+## 坑 18：改文案 / HMR 后侧栏能点但主区一直停在「我的Koven」
+
+- **现象**：热更新（尤其改 `catalog` / `routes`）后，点概览或其它导航，顶栏或内容仍像停在首页；重启 `npm run dev` 又正常。
+- **根因**：Vite HMR 重建了 `useNavigationStore`，侧栏与 `KeepAliveOutlet` 可能短时间各绑不同 store 实例；叠加 `invisible` 叠层时，后访问的不透明页也可能盖住当前页。
+- **修复**：`navigation-store.ts` 用 `import.meta.hot.data` 复用同一 store；`KeepAliveOutlet` 非当前页用 `hidden` + 当前页 `z-10`，避免叠层穿透。

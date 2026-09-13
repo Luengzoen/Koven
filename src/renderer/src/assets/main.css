@@ -25,6 +25,10 @@
   --info-foreground: #fafafa;
   --font-scale: 1;
   --font-sans-family: "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif;
+  --scrollbar-size: 10px;
+  --scrollbar-thumb: color-mix(in srgb, var(--muted-foreground) 32%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--muted-foreground) 52%, transparent);
+  --scrollbar-track: transparent;
 }
 
 .dark {
@@ -48,6 +52,8 @@
   --warning-foreground: #09090b;
   --info: #a1a1aa;
   --info-foreground: #09090b;
+  --scrollbar-thumb: color-mix(in srgb, var(--muted-foreground) 38%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--muted-foreground) 58%, transparent);
 }
 
 @theme inline {
@@ -92,4 +98,59 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans-family);
+}
+
+/* 默认禁止拖选；可读正文等以后用 Tailwind `select-text` 单独开放 */
+*,
+*::before,
+*::after {
+  user-select: none;
+}
+
+input,
+textarea,
+select,
+[contenteditable='true'],
+[contenteditable='plaintext-only'] {
+  user-select: text;
+}
+
+/*
+ * 浏览器默认 :focus 描边（点击按钮后常残留一圈蓝/黑框）。
+ * 仅去掉「鼠标点出来的 focus」；键盘 Tab 仍用 :focus-visible。
+ */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* 原生 search clear 改 cursor 不可靠，统一用 SearchField 自绘清除钮 */
+
+/* 全局细滚动条：透明轨道 + 胶囊拇指，双主题跟语义色 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  background-clip: content-box;
+  border: 2px solid transparent;
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }

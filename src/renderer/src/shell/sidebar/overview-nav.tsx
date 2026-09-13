@@ -2,12 +2,12 @@ import { overviewPages, resolvePageTitle } from '@renderer/routes'
 import { useNavigationStore } from '@renderer/shell/navigation-store'
 import { useLocale, useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
-import { CompassIcon, Clock3Icon, StarIcon, type LucideIcon } from 'lucide-react'
+import { CalendarClockIcon, FolderPlusIcon, HomeIcon, type LucideIcon } from 'lucide-react'
 
 const overviewIcons: Record<string, LucideIcon> = {
-  'overview:home': CompassIcon,
-  'overview:recent': Clock3Icon,
-  'overview:starred': StarIcon
+  'overview:home': HomeIcon,
+  'overview:recent': CalendarClockIcon,
+  'overview:starred': FolderPlusIcon
 }
 
 export function OverviewNav() {
@@ -23,7 +23,7 @@ export function OverviewNav() {
       </h2>
       <nav className="flex flex-col gap-0.5">
         {overviewPages.map((entry) => {
-          const Icon = overviewIcons[entry.id] ?? CompassIcon
+          const Icon = overviewIcons[entry.id] ?? HomeIcon
           const active = sidebarSelectedId === entry.id
           return (
             <button

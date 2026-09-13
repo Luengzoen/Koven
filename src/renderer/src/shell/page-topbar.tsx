@@ -41,7 +41,7 @@ export function PageTopbar() {
             aria-label={
               previousTitle ? t('nav.backTo', { title: previousTitle }) : t('nav.back')
             }
-            className="inline-flex h-8 max-w-[7.5rem] min-w-0 shrink cursor-pointer items-center gap-0.5 overflow-hidden rounded-md px-1 text-sm text-primary outline-none transition-colors hover:bg-accent [&_svg]:size-4"
+            className="inline-flex h-8 max-w-[7.5rem] min-w-0 shrink cursor-pointer items-center gap-0.5 overflow-hidden rounded-md px-1 text-sm text-foreground outline-none transition-colors hover:bg-accent [&_svg]:size-4"
           >
             <ChevronLeftIcon className="shrink-0" />
             {previousTitle ? (

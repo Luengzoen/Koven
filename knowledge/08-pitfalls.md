@@ -133,3 +133,21 @@
 - **现象**：路径链父级（此电脑 / C: 等）逻辑上已是打开态，但行背景与周围一样。
 - **根因**：暗色 token 里 `--muted` 与 `--card` 同为 `#18181b`；在 `bg-card` 上写 `bg-muted` 等于没高亮。不是 HMR/重启问题。
 - **修复**：分栏行的聚焦 / 选中 / 路径链伪选中统一用 `bg-accent`（`#27272a`）。
+
+## 坑 23：`Cannot access 'homePage' before initialization`
+
+- **现象**：白屏；DevTools：`Uncaught ReferenceError: Cannot access 'homePage' before initialization`（`navigation-store.ts`）。
+- **根因**：`routes` → `NewProjectPage` → `navigation-store` → 模块顶层读 `homePage`（尚在 TDZ）形成循环依赖。
+- **修复**：固定首页 id 抽到 `shell/page-ids.ts` 的 `HOME_PAGE_ID`；导航 store 初始化只用该常量，不在顶层碰 `routes.homePage`。
+
+## 坑 25：主进程改了但 Electron 仍跑旧逻辑（去重/删空项目不生效）
+
+- **现象**：库里同路径出现多个项目；任务删光后空项目还在。源码已有去重/删空，测试也过。
+- **根因**：`package.json` 的 `main` 指向 `out/main/index.js`；`npm run dev` 下**只有主进程文件变更才会重编并重启 Electron**。只改 `src/main` 后若终端已停、或仅渲染 HMR，运行中的仍是旧 `out/main`。
+- **修复**：改主进程后须重新 `npm run dev`（或至少让 electron-vite 重建 main）。打开库时 `repairProjectIntegrity` 合并同路径项目、删除无未归档任务的空项目，并建 `lower(workspace_path)` 唯一索引。
+
+## 坑 24：侧栏任务菜单确认气泡闪一下消失 / 重命名无焦点；下拉内试听首次选中并收起
+
+- **现象**：归档/删除确认 Popover 刚出即关；重命名输入框出现后瞬间复原；菜单项「完全没反应」；完成提示音下拉里点播放会选中并关菜单。
+- **根因**：① Dropdown 与 Popover 共 `Trigger`，关菜单的 dismiss/归还焦点会立刻关掉刚打开的 Popover；② 菜单 `onCloseAutoFocus` 把焦点拉回 trigger，重命名 input 失焦触发 blur 取消；③ **受控** `setMenuOpen(false)` **不会**再调 `onOpenChange`，动作不能只挂在那里；④ 关菜单后的残留 pointer/focus outside 会关掉刚打开的 Popover；⑤ Radix `MenuItem.onSelect` 早于子按钮 `onClick`。
+- **修复**：`PopoverAnchor`；`DropdownMenuContent.onCloseAutoFocus` 一律 `preventDefault`；`onSelect` 里关菜单后 `setTimeout(~120ms)` 再重命名/开确认；确认气泡短时忽略 outside；重命名后约 220ms 内忽略 blur；试听在 `pointerDown` 置 flag。

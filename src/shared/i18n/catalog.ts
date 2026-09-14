@@ -27,6 +27,13 @@ export const messageKeys = [
   'nav.expandSidebar',
   'nav.back',
   'nav.backTo',
+  'nav.renameTask',
+  'nav.archiveTask',
+  'nav.deleteTask',
+  'nav.archiveTaskConfirm',
+  'nav.deleteTaskConfirm',
+  'nav.loadMoreTasks',
+  'nav.searchEmpty',
 
   // B. placeholder
   'placeholder.comingSoon',
@@ -102,6 +109,15 @@ export const messageKeys = [
   'general.languageDescription',
   'general.localeZhCN',
   'general.localeEn',
+  'general.completionSound',
+  'general.completionSoundDescription',
+  'general.completionSoundPreview',
+  'general.completionSound01',
+  'general.completionSound02',
+  'general.completionSound03',
+  'general.completionSound04',
+  'general.completionSound05',
+  'general.completionSound06',
 
   // E. system
   'system.window',
@@ -127,6 +143,7 @@ export const messageKeys = [
   'common.close',
   'common.cancel',
   'common.confirm',
+  'common.ok',
   'common.search',
   'common.clear',
 
@@ -168,6 +185,13 @@ const zhCN: Catalog = {
   'nav.expandSidebar': '展开侧栏',
   'nav.back': '返回',
   'nav.backTo': '返回{title}',
+  'nav.renameTask': '重命名',
+  'nav.archiveTask': '归档',
+  'nav.deleteTask': '删除',
+  'nav.archiveTaskConfirm': '确定归档这个任务吗？',
+  'nav.deleteTaskConfirm': '确定删除这个任务吗？删除后不可恢复。',
+  'nav.loadMoreTasks': '更多',
+  'nav.searchEmpty': '没有匹配的项目或任务',
 
   'placeholder.comingSoon': '页面内容稍后提供',
 
@@ -238,6 +262,15 @@ const zhCN: Catalog = {
   'general.languageDescription': '选择界面显示语言',
   'general.localeZhCN': '简体中文',
   'general.localeEn': 'English',
+  'general.completionSound': '完成提示音',
+  'general.completionSoundDescription': '任务完成且不在当前页时播放',
+  'general.completionSoundPreview': '试听',
+  'general.completionSound01': '任务完成 · 轻快确认',
+  'general.completionSound02': '任务完成 · 柔和通知',
+  'general.completionSound03': '任务完成 · 短促高亮',
+  'general.completionSound04': '任务完成 · 递进回响',
+  'general.completionSound05': '任务完成 · 喜悦提示',
+  'general.completionSound06': '任务完成 · 极简叮咚',
 
   'system.window': '窗口',
   'system.onClose': '关闭时',
@@ -260,6 +293,7 @@ const zhCN: Catalog = {
   'common.close': '关闭',
   'common.cancel': '取消',
   'common.confirm': '选择',
+  'common.ok': '确定',
   'common.search': '搜索',
   'common.clear': '清除',
 
@@ -297,6 +331,13 @@ const en: Catalog = {
   'nav.expandSidebar': 'Expand sidebar',
   'nav.back': 'Back',
   'nav.backTo': 'Back to {title}',
+  'nav.renameTask': 'Rename',
+  'nav.archiveTask': 'Archive',
+  'nav.deleteTask': 'Delete',
+  'nav.archiveTaskConfirm': 'Archive this task?',
+  'nav.deleteTaskConfirm': 'Delete this task? This cannot be undone.',
+  'nav.loadMoreTasks': 'More',
+  'nav.searchEmpty': 'No matching projects or tasks',
 
   'placeholder.comingSoon': 'Page content coming soon',
 
@@ -368,6 +409,15 @@ const en: Catalog = {
   'general.languageDescription': 'Choose the display language',
   'general.localeZhCN': '简体中文',
   'general.localeEn': 'English',
+  'general.completionSound': 'Completion sound',
+  'general.completionSoundDescription': 'Plays when a task finishes while you are elsewhere',
+  'general.completionSoundPreview': 'Preview',
+  'general.completionSound01': 'Light Confirm',
+  'general.completionSound02': 'Soft Notification',
+  'general.completionSound03': 'Sharp Alert',
+  'general.completionSound04': 'Echo Completion',
+  'general.completionSound05': 'Cheerful Success',
+  'general.completionSound06': 'Minimal Ding',
 
   'system.window': 'Window',
   'system.onClose': 'On close',
@@ -390,6 +440,7 @@ const en: Catalog = {
   'common.close': 'Close',
   'common.cancel': 'Cancel',
   'common.confirm': 'Choose',
+  'common.ok': 'OK',
   'common.search': 'Search',
   'common.clear': 'Clear',
 

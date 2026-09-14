@@ -1,3 +1,4 @@
+import { CompletionSoundSelect } from '@renderer/capabilities/preferences/completion-sound-select'
 import { SettingsRow } from '@renderer/capabilities/preferences/settings-row'
 import { Button } from '@renderer/components/ui/button'
 import {
@@ -176,6 +177,12 @@ export function GeneralPane() {
                 </DropdownMenuContent>
               </DropdownMenu>
             }
+          />
+          <SettingsRow
+            className="border-t border-border"
+            title={t('general.completionSound')}
+            description={t('general.completionSoundDescription')}
+            control={<CompletionSoundSelect />}
           />
         </div>
       </section>

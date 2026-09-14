@@ -1,12 +1,9 @@
 import { getPage, resolvePageTitle } from '@renderer/routes'
+import { useProjectsStore } from '@renderer/capabilities/projects/projects-store'
 import { useActivePage, useNavigationStore } from '@renderer/shell/navigation-store'
 import { useShellLayoutStore } from '@renderer/shell/shell-layout-store'
 import { useLocale, useT } from '@renderer/shell/use-t'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@renderer/components/ui/tooltip'
+import { parseTaskPageId } from '@shared/capabilities/projects'
 import { ChevronLeftIcon, PanelLeftIcon } from 'lucide-react'
 
 export function PageTopbar() {
@@ -15,6 +12,10 @@ export function PageTopbar() {
   const back = useNavigationStore((state) => state.back)
   const sidebarOpen = useShellLayoutStore((state) => state.sidebarOpen)
   const toggleSidebar = useShellLayoutStore((state) => state.toggleSidebar)
+  const taskTitle = useProjectsStore((state) => {
+    const taskId = parseTaskPageId(page.id)
+    return taskId ? state.getTaskById(taskId)?.title : undefined
+  })
   const t = useT()
   const locale = useLocale()
 
@@ -23,7 +24,7 @@ export function PageTopbar() {
   const previousTitle = previousId
     ? resolvePageTitle(getPage(previousId), locale)
     : undefined
-  const pageTitle = resolvePageTitle(page, locale)
+  const pageTitle = taskTitle || resolvePageTitle(page, locale)
   const sidebarTooltip = sidebarOpen
     ? t('nav.collapseSidebar')
     : t('nav.expandSidebar')
@@ -31,20 +32,16 @@ export function PageTopbar() {
   return (
     <div className="relative flex h-10 shrink-0 items-center border-b border-border px-2">
       <div className="z-10 flex min-w-0 items-center gap-0.5">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              aria-label={sidebarTooltip}
-              aria-pressed={sidebarOpen}
-              onClick={toggleSidebar}
-              className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground [&_svg]:size-4"
-            >
-              <PanelLeftIcon />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">{sidebarTooltip}</TooltipContent>
-        </Tooltip>
+        <button
+          type="button"
+          title={sidebarTooltip}
+          aria-label={sidebarTooltip}
+          aria-pressed={sidebarOpen}
+          onClick={toggleSidebar}
+          className="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground [&_svg]:size-4"
+        >
+          <PanelLeftIcon />
+        </button>
 
         {showBack ? (
           <button

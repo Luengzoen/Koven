@@ -26,20 +26,20 @@ const count = useCounterStore((state) => state.count)
 |---|---|
 | 仅当前窗口的 UI（弹层开关、输入草稿、计数演示） | Zustand（该能力包内） |
 | 壳会话（窗口、侧栏、当前页） | main JSON：`getDataRoot()/capabilities/shell/snapshot.json` |
-| 偏好（主题、语言、general 字体/字号/关闭行为） | main JSON：`getDataRoot()/capabilities/preferences/preferences.json`；UI：侧栏主题 segment + 首选项 General（含语言）/ System |
-| 需要跨窗口、重启仍在、或碰磁盘/系统 | 主进程 + IPC，文件走 `kernel/storage.ts`（原子写） |
+| 偏好（主题、语言、general 字体/字号/关闭行为/完成提示音） | main JSON：`getDataRoot()/capabilities/preferences/preferences.json`；UI：侧栏主题 segment + 首选项 General（含语言、完成提示音）/ System |
+| 需要跨窗口、重启仍在、或碰磁盘/系统 | 主进程 + IPC；JSON 走 `kernel/storage.ts`；**多行业务**走能力包 SQLite（如 `projects` → `koven.db`） |
 | 密钥、不可信输入、权限 | 只在 main；renderer 只拿最小结果 |
 
-不要用 `localStorage` 当「持久化」。埋点 / 业务多行数据以后另仓，不塞进上述两份 JSON。
+不要用 `localStorage` 当「持久化」。埋点以后另仓。
 
-**落盘根目录例外**：安装/项目 `.data` 可写时一切在 `.data/`；不可写时 Electron 与能力 JSON **全量**回落到 `%APPDATA%\koven`（见 `02-modules-main.md`）。开发态经 `confine.js` 仍优先项目内。
+**落盘根目录例外**：安装/项目 `.data` 可写时一切在 `.data/`；不可写时 Electron 与能力 JSON/SQLite **全量**回落到 `%APPDATA%\koven`（见 `02-modules-main.md`）。开发态经 `confine.js` 仍优先项目内。
 
 ## 2.5 壳会话与偏好（A/B JSON）
 
 | 文件 | 域 |
 |---|---|
 | `…/capabilities/shell/snapshot.json` | B：窗口、导航页、侧栏选中、开合、宽度、首选项内部分类 `preferencesSectionId` |
-| `…/capabilities/preferences/preferences.json` | A：theme / locale（`'zh-CN' \| 'en'`）/ general（`fontFamily` + `fontSize` 五档 + `closeBehavior`） |
+| `…/capabilities/preferences/preferences.json` | A：theme / locale（`'zh-CN' \| 'en'`）/ general（`fontFamily` + `fontSize` 五档 + `closeBehavior` + `completionSound`，默认 `task_complete_06`） |
 
 ### 版本迁移
 
@@ -54,7 +54,8 @@ const count = useCounterStore((state) => state.count)
 - UI 导航/侧栏：renderer 防抖 `shell.patchUi`；启动 `hydrateSession`。含首选项内部分类 `navigation.preferencesSectionId`（`general` | `system`，非法回落 `general`）。
 - 侧栏高亮与当前页可分离：`openFromSidebar` 二者同设；`open`（非侧栏入口）只换页并清空高亮。
 - 导航返回栈 `backStack` 仅内存：换页时压入上一 `activeId`，`back()` 弹出并尽量恢复侧栏高亮；不写 shell 快照。
-- 埋点 / 业务多行数据以后另仓，不塞进上述两份 JSON。
+- 埋点以后另仓，不塞进上述两份 JSON。
+- **项目/任务**：`projects` 能力包 SQLite（`node:sqlite` / `DatabaseSync`），路径 `getDataRoot()/capabilities/projects/koven.db`；renderer 经 `useProjectsStore` hydrate。
 
 ## 2.6 可观测性（阶段 A）
 

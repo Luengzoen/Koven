@@ -2,8 +2,9 @@ import type { AppInfoAPI } from './capabilities/app-info'
 import type { PreferencesAPI } from './capabilities/preferences'
 import type { ShellAPI } from './capabilities/shell'
 import type { FsBrowserAPI } from './capabilities/fs-browser'
+import type { ProjectsAPI } from './capabilities/projects'
 
-export type AppAPI = AppInfoAPI & ShellAPI & PreferencesAPI & FsBrowserAPI
+export type AppAPI = AppInfoAPI & ShellAPI & PreferencesAPI & FsBrowserAPI & ProjectsAPI
 
 export type { AppInfo } from './capabilities/app-info'
 export type {

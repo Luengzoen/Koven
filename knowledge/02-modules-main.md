@@ -65,6 +65,23 @@
 | `fs-browser:get-entry-detail` | `fsBrowserIpc.getEntryDetail` | 聚焦项详情（大小/时间/卷容量等） |
 | `fs-browser:resolve-path` | `fsBrowserIpc.resolvePath` | 解析绝对路径为可展开列链 |
 | `fs-browser:get-file-icon` | `fsBrowserIpc.getFileIcon` | 文件图标 PNG data URL；`.lnk` 先 `readShortcutLink` 再对 icon/target 取图标（避免通用快捷方式白纸图标） |
+| `projects:list-projects` | `projectsIpc.listProjects` | 未归档项目全量（`sort_order` 固定） |
+| `projects:list-tasks` | `projectsIpc.listTasks` | 某项目任务分页（默认 10，`last_chat_at` 降序 + `hasMore`） |
+| `projects:create-project-with-task` | `projectsIpc.createProjectWithTask` | 工作空间建项目（名=文件夹名）+ 首任务；**同路径未归档项目去重**，只加任务 |
+| `projects:create-task` | `projectsIpc.createTask` | 已有项目下建任务 |
+| `projects:rename-task` / `archive-task` / `delete-task` | 对应常量 | 重命名 / 软归档 / 硬删除；若项目下已无未归档任务则一并硬删项目（返回 `removedProjectId`） |
+| `projects:update-task-status` | `projectsIpc.updateTaskStatus` | `loading` \| `finished` \| `error` \| `idle` |
+| `projects:touch-task-chat` | `projectsIpc.touchTaskChat` | 更新 `last_chat_at`（置顶） |
+| `projects:search` | `projectsIpc.search` | 项目名/任务标题搜索分页 + `hasMore` |
+| `projects:get-task` | `projectsIpc.getTask` | 按 id 取任务 |
+
+### projects（SQLite）
+
+- 库文件：`getDataRoot()/capabilities/projects/koven.db`
+- 引擎：**`node:sqlite`（`DatabaseSync`）**，零 npm 依赖；与小红书Agent 同路径。绑定参数禁止 `undefined`（须 `?? null`）
+- 打开时 `repairProjectIntegrity`：合并同路径未归档项目、删除无未归档任务的空项目、`lower(workspace_path)` 唯一索引
+- 实现：`src/main/capabilities/projects/`（`db.ts` / `queries.ts` / `mutations.ts` / `repair.ts` / `workspace-path.ts` / `row-utils.ts` / `register.ts`）
+- 消息正文本阶段不落库（renderer mock 流式）
 
 ### fs-browser 与 MFT
 

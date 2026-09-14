@@ -13,9 +13,14 @@ import { useState, type MouseEvent, type PointerEvent } from 'react'
 type WorkspacePickerProps = {
   value: string | null
   onChange: (path: string | null) => void
+  disabled?: boolean
 }
 
-export function WorkspacePickerButton({ value, onChange }: WorkspacePickerProps) {
+export function WorkspacePickerButton({
+  value,
+  onChange,
+  disabled = false
+}: WorkspacePickerProps) {
   const t = useT()
   const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState<FsBrowserListEntry[]>([])
@@ -25,6 +30,7 @@ export function WorkspacePickerButton({ value, onChange }: WorkspacePickerProps)
     : t('newProject.selectWorkspace')
 
   function handleOpenChange(next: boolean) {
+    if (disabled) return
     setOpen(next)
     if (next) {
       setDraft(
@@ -62,7 +68,8 @@ export function WorkspacePickerButton({ value, onChange }: WorkspacePickerProps)
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="group inline-flex max-w-[50%] cursor-pointer items-center gap-1.5 rounded-md px-1 py-0.5 text-sm text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground"
+          disabled={disabled}
+          className="group inline-flex max-w-[50%] cursor-pointer items-center gap-1.5 rounded-md px-1 py-0.5 text-sm text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
           aria-label={t('newProject.selectWorkspace')}
         >
           <FolderIcon className="size-3.5 shrink-0" />

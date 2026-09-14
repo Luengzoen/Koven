@@ -30,7 +30,7 @@
 | 对话框 | `Dialog` | Overlay/Content 带 `z-50`；必须有 `DialogTitle`（可视或 `sr-only`）；关闭钮要有「关闭」可读名称；关于用居中紧凑布局。首选项是主区导航页，不用 Dialog |
 | 页面顶栏 | `PageTopbar` | 侧栏按钮固定；居中 `AppPage.title`；返回由 `chrome.showBack` 开关（箭头 + 上一页 title，无 title 则仅箭头） |
 | 菜单 | `DropdownMenu` | `Item` 放在 `Group` 里；Content 带 `z-50`；进出场动画写在 `components/ui/dropdown-menu`（`koven-menu-in/out`），业务侧勿再各自加一套；危险项以后用独立约定，不要 `window.confirm` |
-| 提示 | `Tooltip` | 图标钮 / 截断路径等悬停说明；文案走 i18n；壳层包一层 `TooltipProvider`；Content 带 `z-50`；禁用钮外包一层可悬停元素 |
+| 提示 | 原生 `title` | 与系统 tooltip 一致（主题 segment 同款）；图标钮 / 截断路径等悬停说明；**禁止**再引入 Radix Tooltip 或自绘气泡当悬停提示 |
 | 锚点面板 | `Popover` | 可嵌复杂交互（如文件分栏选择器）；Content 带 `z-50`；轻微弹性缩放写在 `components/ui/popover`（`koven-popover-in/out`）；四边轻阴影用 `--shadow-popover`（明暗各一套）；业务侧勿再各自加一套；不要用 Dropdown 塞大块可点内容 |
 | 分割线 | `Separator` | 不要手写 `hr` 或 `border-t` 当语义分割 |
 | 滑条 | `Slider` | 离散刻度 + 胶囊拇指；下方稀疏标签（如字号「小/默认/大」）；轨道用 `foreground`/`border` 等语义色适配明暗 |
@@ -44,7 +44,7 @@
 
 清爽明暗双主题；界面主体黑白灰。暗色用 `html.dark`（`@custom-variant dark`）。偏好：`system` / `light` / `dark`，落盘见 `06-patterns-state.md`。
 
-文字：General 可选 Win 常见中文字体（下拉项用对应 `font-family` 预览；产品名两语均保留中文）与五档字号（极小…大，默认标准），以及界面语言（简体中文 / English）。`applyTypography` 写 `--font-sans-family` / `--font-scale`；`main.css` 的 `@theme` 用 `calc(基准 * var(--font-scale))` 定义 `--text-xs`…`--text-3xl`。禁止新写 `text-[Npx]`，用 `text-*` 以便跟档。控制高度（`h-*`）不随字号涨。System：关闭行为 `closeBehavior`（`tray` | `quit`，默认托盘）。
+文字：General 可选 Win 常见中文字体（下拉项用对应 `font-family` 预览；产品名两语均保留中文）与五档字号（极小…大，默认标准），界面语言（简体中文 / English），以及完成提示音（六档 wav，默认「极简叮咚」/`Minimal Ding`；下拉项旁可试听，播放中细线流光圆环，同时只播一个）。`applyTypography` 写 `--font-sans-family` / `--font-scale`；`main.css` 的 `@theme` 用 `calc(基准 * var(--font-scale))` 定义 `--text-xs`…`--text-3xl`。禁止新写 `text-[Npx]`，用 `text-*` 以便跟档。控制高度（`h-*`）不随字号涨。System：关闭行为 `closeBehavior`（`tray` | `quit`，默认托盘）。完成提示音与侧栏 `finished` badge 同机：仅当任务完成且当前不在该任务页时播放。
 
 文案：壳层 / 设置 / 关于 / 托盘等使用者可见字符串走 `src/shared/i18n`（`t` / `useT`），禁止在组件里硬编码双语。项目名与任务名（用户数据）不进词典。`locale` 落盘后切换立即生效（同步 `html[lang]`；主进程重建托盘菜单），不弹重启对话框。
 

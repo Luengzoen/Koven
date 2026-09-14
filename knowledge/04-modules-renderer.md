@@ -18,9 +18,12 @@
 | `src/renderer/src/shell/shell-layout-store.ts` | 侧栏开合与宽度（默认/最小 250，最大 600；收起不改宽度） |
 | `src/renderer/src/shell/navigation-store.ts` | `activeId` / `sidebarSelectedId` / `backStack` / `openFromSidebar` / `open` / `back` |
 | `src/renderer/src/shell/create-navigation-store.ts` | 导航 store 工厂（含返回栈；不落盘） |
-| `src/renderer/src/shell/keep-alive-outlet.tsx` | 已访问页保活（非当前页 `hidden`；**当前页不加 z-10**，以免压住 Dropdown Portal） |
-| `src/renderer/src/shell/session-persistence.ts` | hydrate + 写回 shell/preferences |
-| `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（字体族·字号·关闭行为落盘；语言驱动 `useT`） |
+| `src/renderer/src/shell/keep-alive-outlet.tsx` | 已访问页保活；**草稿页 `overview:starred` 不进 `visitedIds`，单独渲染且离开即毁** |
+| `src/renderer/src/shell/draft-store.ts` / `draft-page.ts` | 新建项目 vs 项目加号草稿（`projectId` 决定是否显示工作空间） |
+| `src/renderer/src/shell/session-persistence.ts` | hydrate（含 projects）+ 写回 shell/preferences |
+| `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（字体族·字号·关闭行为·完成提示音落盘；语言驱动 `useT`） |
+| `src/renderer/src/shell/completion-sound.ts` | 完成提示音单例播放器（同时只播一个） |
+| `src/renderer/src/shell/play-task-complete-sound.ts` | 与侧栏 finished badge 同机触发播放 |
 | `src/renderer/src/shell/use-t.ts` | 订阅 `locale`，返回 `t(key)` |
 | `src/renderer/src/shell/use-document-lang.ts` | 同步 `html[lang]` |
 | `src/renderer/src/shell/theme-resolve.ts` | `ThemePreference` → 实际 light/dark |
@@ -28,12 +31,14 @@
 | `src/renderer/src/shell/apply-typography.ts` | 写 `--font-scale` / `--font-sans-family` |
 | `src/renderer/src/shell/use-theme-sync.ts` | 订阅偏好与系统配色，无动画同步 |
 | `src/renderer/src/components/ui/theme-segment.tsx` | 三档主题 segment（系统/浅/深） |
-| `src/renderer/src/shell/sidebar/` | Overview 三项（我的Koven / 定时任务 / 新建项目）/ 搜索 / Projects 树 / 底部设置（首选项导航页 + 关于对话框 + 主题 segment） / 右缘拖宽 |
-| `src/renderer/src/routes.ts` | Overview（我的Koven / 定时任务 / 新建项目页）+ 任务占位页 + 首选项页注册表（`AppPage.chrome`） |
+| `src/renderer/src/shell/sidebar/` | Overview / 搜索（双模式）/ Projects 树（分页更多、状态显隐、重命名/归档/删除、超长标题悬停滚动、项目路径/任务标题用原生 `title`）/ 底部设置 |
+| `src/renderer/src/routes.ts` | Overview + 首选项静态注册；`task:<id>` **动态**解析为 `TaskChatPage` |
 | `src/renderer/src/assets/koven.png` | logo |
-| `src/renderer/src/capabilities/preferences/` | 首选项导航页（General / System；内部分类经壳快照持久化） |
+| `src/renderer/src/capabilities/preferences/` | 首选项导航页（General / System；通用含完成提示音下拉+试听；内部分类经壳快照持久化） |
 | `src/renderer/src/capabilities/app-info/` | 关于对话框 |
-| `src/renderer/src/capabilities/new-project/` | 新建项目页：居中标题 + Prompt（模式菜单 / 回形针 / 底栏工作空间 Popover 分栏选择 · 权限占位；随内容撑高至 500px） |
+| `src/renderer/src/capabilities/new-project/` | 草稿页：hero + Prompt；首发后创建项目/任务并切到任务页 |
+| `src/renderer/src/capabilities/projects/` | `projects-store`（hydrate / 分页 / 搜索） |
+| `src/renderer/src/capabilities/task-chat/` | 任务对话页 + mock 流式 + 忙碌态 composer；流结束置 `finished` 时若非当前任务页则播完成提示音 |
 
 CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）；`connect-src` 含 `ws:`/`wss:`（HMR）。收紧 CSP 时先读 `08-pitfalls.md`。
 
@@ -48,19 +53,20 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 | `components/ui/button.tsx` | Radix `Slot` + `cva`（含 primary） |
 | `components/ui/dialog.tsx` | `@radix-ui/react-dialog` |
 | `components/ui/dropdown-menu.tsx` | `@radix-ui/react-dropdown-menu`（Content 须 `z-50`；统一 `koven-menu-in/out` 进出场） |
-| `components/ui/tooltip.tsx` | `@radix-ui/react-tooltip`（壳层 `TooltipProvider`；Content `z-50`） |
 | `components/ui/separator.tsx` | `@radix-ui/react-separator` |
-| `components/ui/theme-segment.tsx` | 主题三档 segment |
+| `components/ui/theme-segment.tsx` | 主题三档 segment（悬停用原生 `title`） |
 | `components/ui/slider.tsx` | 离散档位 range 滑条 |
 | `components/ui/switch.tsx` | 二态开关（左关右开） |
 | `components/ui/focus-frame.tsx` | 编辑框 0.5px focus 发丝亮边容器（`input`/`textarea` 必包） |
 | `components/ui/search-field.tsx` | 搜索框 + 自绘清除钮（替代原生 clear） |
 | `components/ui/popover.tsx` | `@radix-ui/react-popover`（Content `z-50`；轻微弹性 `koven-popover-in/out`；可嵌复杂内容） |
-| `components/fs-browser/` | 访达式分栏选择：`FileBrowser` + 前往栏 + 开合图标 + `.lnk` 壳图标；可下钻项（目录/卷/此电脑）行尾右箭头；悬停 Tooltip 显示全路径（「此电脑」用 i18n 名）；列数变深时横向滚到最右；路径链祖先伪选中用 `bg-accent`（暗色 `muted===card`，勿用 `bg-muted`）并纵向滚入可视；入参见 `file-browser-types.ts` |
+| `components/fs-browser/` | 访达式分栏选择：`FileBrowser` + 前往栏 + 开合图标 + `.lnk` 壳图标；可下钻项（目录/卷/此电脑）行尾右箭头；悬停原生 `title` 显示全路径（「此电脑」用 i18n 名）；列数变深时横向滚到最右；路径链祖先伪选中用 `bg-accent`（暗色 `muted===card`，勿用 `bg-muted`）并纵向滚入可视；入参见 `file-browser-types.ts` |
 | `lib/cn.ts` | `clsx` + `tailwind-merge` |
 | `capabilities/preferences/` | 首选项导航页（General / System） |
 | `capabilities/app-info/` | 关于对话框 |
-| `capabilities/new-project/` | 新建项目 + Prompt；「选择工作空间」Popover 随 Content 生命周期重挂 `FileBrowser`（勿用 `open` 条件提前拆掉，否则关闭动画只剩底栏）；`value`+`initialPath` 回传对齐 |
+| `capabilities/new-project/` | 草稿 + Prompt；工作空间 Popover；流式忙碌时禁用模式/回形针/工作空间/权限 |
+| `capabilities/projects/` | 侧栏数据 store（IPC → SQLite） |
+| `capabilities/task-chat/` | 任务对话页；mock 思考/正文流式；docked composer |
 
 新增可复用控件放 `components/ui/`；页面与业务组合放 `capabilities/<name>/`。壳导航与侧栏放 `shell/`。规范见 `09-ui-spec.md`、`10-architecture.md`。
 
@@ -68,13 +74,13 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 
 ## 4. 当前页面行为
 
-- 启动先 `hydrateSession`（shell 快照 + preferences），再挂 `AppShell`。
-- 默认/恢复：Overview 或上次 `activePageId`；侧栏高亮用 `sidebarSelectedId`（仅常规侧栏入口；对不上则不高亮）。
-- Overview / Projects 任务用 `openFromSidebar`；非侧栏进入用 `open`（清高亮）；「首选项」走 `open('preferences')`。「新建项目」为真实页（底部 Prompt 对话框），其余 Overview 项仍占位。
-- topbar：始终显示侧栏按钮与当前页 `title`；`AppPage.chrome.showBack` 为真时显示 iOS 风格返回（左箭头 + 上一页 title，拿不到 title 则只显示箭头）；目前仅 `preferences` 开启。返回走 `back()` / `backStack`（内存，不落盘）。
-- 侧栏搜索可输入（过滤逻辑稍后）；加号/三点占位；底部「系统设置」菜单含主题 segment、首选项页、关于对话框（检查更新 / 帮助仍占位）。首选项含 General（字体/字号/语言）与 System（关闭时：隐藏到托盘 / 退出主程序）；内部分类 `preferencesSectionId` 随壳会话落盘。
-- 壳 UI 与偏好防抖写回 `.data/capabilities/shell/snapshot.json` 与 `preferences/preferences.json`。语言切换立即 `setLocale` + `preferences.set`，界面与托盘菜单立刻换文案（无需重启）。
-- 侧栏收起/展开为宽度过渡（拖宽时关过渡）；收起仍记住 `sidebarWidth`。
+- 启动先 `hydrateSession`（壳快照 + preferences）再挂 `AppShell`；**`hydrateProjects` 后台进行**（超时不挡首屏）。
+- 默认/恢复：Overview 或上次 `activePageId`；任务已删/已归档则回落首页；侧栏高亮用 `sidebarSelectedId`。
+- 「新建项目」草稿页 **不 keepalive**；任务页 `task:<id>` 可保活。
+- 首条发送须已选工作空间（项目加号草稿除外）；标题=前 15 字，项目名=文件夹名；**同工作空间路径归入已有项目（去重）**；发送后选中对应任务。
+- 侧栏：项目全量固定序；任务每页 10 +「更多」；状态徽标仅非当前任务显示；超长任务标题悬停头尾循环滚动；项目/任务悬停用原生 `title`（路径 / 标题）；删光或归档光未归档任务后移除空项目；搜索 debounce + 骨架流光 + 命中高亮 + 搜索结果亦可「更多」。
+- topbar：任务标题订阅 `projects-store`；`preferences` 开返回。
+- 壳 UI 与偏好仍写 JSON；项目/任务写 SQLite。
 - 仍不上 react-router。
 
 产品功能不要堆进 `shell/sidebar`；业务进能力包。

@@ -1,4 +1,5 @@
 import { usePreferencesNavStore } from '@renderer/capabilities/preferences/preferences-nav-store'
+import { useProjectsStore } from '@renderer/capabilities/projects/projects-store'
 import {
   SIDEBAR_WIDTH_DEFAULT,
   SIDEBAR_WIDTH_MAX,
@@ -16,6 +17,25 @@ function clampWidth(width: number): number {
   return Math.min(SIDEBAR_WIDTH_MAX, Math.max(SIDEBAR_WIDTH_MIN, Math.round(width)))
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = window.setTimeout(() => {
+      reject(new Error(`${label} timed out after ${ms}ms`))
+    }, ms)
+    promise.then(
+      (value) => {
+        window.clearTimeout(timer)
+        resolve(value)
+      },
+      (error: unknown) => {
+        window.clearTimeout(timer)
+        reject(error)
+      }
+    )
+  })
+}
+
+/** 壳会话 + 偏好：必须尽快完成，决定首屏 */
 export async function hydrateSession(): Promise<void> {
   if (!window.koven) return
 
@@ -44,6 +64,19 @@ export async function hydrateSession(): Promise<void> {
     usePreferencesStore.getState().hydrate(preferencesResult.value)
     applyTheme({ preference: preferencesResult.value.theme })
     applyTypography(preferencesResult.value.general)
+  }
+}
+
+/** 项目树：不挡首屏；失败/超时只空列表 */
+export async function hydrateProjects(): Promise<void> {
+  if (!window.koven?.projects) {
+    useProjectsStore.setState({ hydrated: true })
+    return
+  }
+  try {
+    await withTimeout(useProjectsStore.getState().hydrate(), 8000, 'projects.hydrate')
+  } catch {
+    useProjectsStore.setState({ hydrated: true })
   }
 }
 

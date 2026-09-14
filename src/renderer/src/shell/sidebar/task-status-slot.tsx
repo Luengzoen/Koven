@@ -1,4 +1,4 @@
-import type { TaskStatus } from '@renderer/shell/sidebar/mock-projects'
+import type { TaskStatus } from '@shared/capabilities/projects'
 import { useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
 import { LoaderCircleIcon } from 'lucide-react'
@@ -15,12 +15,12 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
     )
   }
 
-  if (status === 'done') {
+  if (status === 'finished') {
     return (
       <span
         className={cn(
           'shrink-0 rounded px-1 py-0.5 text-xs leading-none font-medium',
-          'bg-success/15 text-success'
+          'bg-muted text-muted-foreground'
         )}
       >
         {t('nav.statusDone')}
@@ -33,7 +33,7 @@ export function TaskStatusSlot({ status }: { status: TaskStatus }) {
       <span
         className={cn(
           'shrink-0 rounded px-1 py-0.5 text-xs leading-none font-medium',
-          'bg-danger/15 text-danger'
+          'bg-muted text-muted-foreground'
         )}
       >
         {t('nav.statusFailed')}

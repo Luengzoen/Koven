@@ -9,11 +9,11 @@
 preload 在页面脚本之前运行，有有限的 Electron API，**没有完整 Node**（`sandbox: true`）。只做一件事：把白名单方法挂到 `window.koven`。
 
 ```ts
-const api: AppAPI = { ...appInfoApi, ...shellApi, ...preferencesApi, ...fsBrowserApi }
+const api: AppAPI = { ...appInfoApi, ...shellApi, ...preferencesApi, ...fsBrowserApi, ...projectsApi }
 exposeApi(api)
 ```
 
-`api` 的类型是 `AppAPI`（`src/shared/app-api.ts` 的交集组装）。各包方法在 `src/preload/capabilities/<name>/api.ts`。渲染进程通过 `window.koven.shell.*` / `window.koven.preferences.*` / `window.koven.fsBrowser.*`（根列/列举/详情/解析路径/文件图标）等命名空间调用。主题即时同步用 `preferences.applyTheme`（`ipcRenderer.send`，不等待）。
+`api` 的类型是 `AppAPI`（`src/shared/app-api.ts` 的交集组装）。各包方法在 `src/preload/capabilities/<name>/api.ts`。渲染进程通过 `window.koven.shell.*` / `window.koven.preferences.*` / `window.koven.fsBrowser.*` / `window.koven.projects.*`（项目/任务 CRUD、分页、搜索）等命名空间调用。主题即时同步用 `preferences.applyTheme`（`ipcRenderer.send`，不等待）。
 
 ## 2. 允许 / 禁止
 

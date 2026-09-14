@@ -65,8 +65,9 @@ IPC 仍须三处同步（合约 → preload → main handle），但落在包内
 
 - **B 壳会话** → `shell/snapshot.json`（load：migrate → normalize → 必要时写回）
 - **A 偏好** → `preferences/preferences.json`（同上）
+- **项目/任务** → `projects/koven.db`（`node:sqlite`；不走 JSON storage 端口）
 
-禁止 `localStorage` 当业务库。埋点与多行业务以后另仓（可 SQLite），见 `06-patterns-state.md`。
+禁止 `localStorage` 当业务库。消息正文等对话内容本阶段仅内存 mock，见 `06-patterns-state.md`。
 
 IPC 三端齐套由 `scripts/check-capability-sync.mjs` 门禁（并进 `npm run typecheck`）：漏注册表 / 缺 preload api / 缺 shared 合约会失败。只做 UI、无 IPC 的包不要建空的 main/preload 骨架去注册。
 

@@ -1,10 +1,15 @@
 import { AppShell } from '@renderer/shell/app-shell'
-import { hydrateSession } from '@renderer/shell/session-persistence'
+import { hydrateProjects, hydrateSession } from '@renderer/shell/session-persistence'
 import { useThemeSync } from '@renderer/shell/use-theme-sync'
 import { useEffect, useState } from 'react'
 
 function AppReady() {
   useThemeSync()
+
+  useEffect(() => {
+    void hydrateProjects()
+  }, [])
+
   return <AppShell />
 }
 

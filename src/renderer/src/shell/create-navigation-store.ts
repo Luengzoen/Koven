@@ -1,5 +1,8 @@
 import { create } from 'zustand'
-import { getPage, homePage } from '@renderer/routes'
+import { getPage } from '@renderer/routes'
+import { isDraftPageId } from '@renderer/shell/draft-page'
+import { useDraftStore } from '@renderer/shell/draft-store'
+import { HOME_PAGE_ID } from '@renderer/shell/page-ids'
 import { listSidebarSelectableIds } from '@renderer/shell/sidebar-selection'
 
 type NavigationState = {
@@ -19,14 +22,22 @@ function sidebarSelectionFor(id: string): string | null {
 }
 
 function pushVisit(visitedIds: readonly string[], id: string): readonly string[] {
-  return visitedIds.includes(id) ? visitedIds : [...visitedIds, id]
+  if (isDraftPageId(id)) return visitedIds.filter((entry) => !isDraftPageId(entry))
+  if (visitedIds.includes(id)) return visitedIds.filter((entry) => !isDraftPageId(entry))
+  return [...visitedIds.filter((entry) => !isDraftPageId(entry)), id]
+}
+
+function clearDraftIfLeaving(fromId: string, toId: string): void {
+  if (isDraftPageId(fromId) && !isDraftPageId(toId)) {
+    useDraftStore.getState().clear()
+  }
 }
 
 export function createNavigationStore(initialId: string) {
   return create<NavigationState>((set, get) => ({
     activeId: initialId,
     sidebarSelectedId: initialId,
-    visitedIds: [initialId],
+    visitedIds: isDraftPageId(initialId) ? [] : [initialId],
     backStack: [],
     openFromSidebar: (id) => {
       const { activeId, visitedIds, backStack } = get()
@@ -34,6 +45,7 @@ export function createNavigationStore(initialId: string) {
         set({ sidebarSelectedId: id })
         return
       }
+      clearDraftIfLeaving(activeId, id)
       set({
         activeId: id,
         sidebarSelectedId: id,
@@ -47,6 +59,7 @@ export function createNavigationStore(initialId: string) {
         set({ sidebarSelectedId: null })
         return
       }
+      clearDraftIfLeaving(activeId, id)
       set({
         activeId: id,
         sidebarSelectedId: null,
@@ -55,17 +68,19 @@ export function createNavigationStore(initialId: string) {
       })
     },
     back: () => {
-      const { backStack, visitedIds } = get()
+      const { activeId, backStack, visitedIds } = get()
       const previousId = backStack[backStack.length - 1]
       if (!previousId || !getPage(previousId)) {
+        clearDraftIfLeaving(activeId, HOME_PAGE_ID)
         set({
-          activeId: homePage.id,
-          sidebarSelectedId: homePage.id,
-          visitedIds: pushVisit(visitedIds, homePage.id),
+          activeId: HOME_PAGE_ID,
+          sidebarSelectedId: HOME_PAGE_ID,
+          visitedIds: pushVisit(visitedIds, HOME_PAGE_ID),
           backStack: []
         })
         return
       }
+      clearDraftIfLeaving(activeId, previousId)
       set({
         activeId: previousId,
         sidebarSelectedId: sidebarSelectionFor(previousId),
@@ -77,7 +92,7 @@ export function createNavigationStore(initialId: string) {
       set({
         activeId,
         sidebarSelectedId,
-        visitedIds: [activeId],
+        visitedIds: isDraftPageId(activeId) ? [] : [activeId],
         backStack: []
       })
     }

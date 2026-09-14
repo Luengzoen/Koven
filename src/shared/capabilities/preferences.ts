@@ -27,11 +27,60 @@ export type FontSizeId = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 /** 点窗口关闭钮时的行为 */
 export type CloseBehavior = 'tray' | 'quit'
 
+/** 任务完成提示音（资源文件 stem，对应 assets/task_complete_XX.wav） */
+export type CompletionSoundId =
+  | 'task_complete_01'
+  | 'task_complete_02'
+  | 'task_complete_03'
+  | 'task_complete_04'
+  | 'task_complete_05'
+  | 'task_complete_06'
+
 export type GeneralPreferences = {
   fontFamily: FontFamilyId
   fontSize: FontSizeId
   closeBehavior: CloseBehavior
+  completionSound: CompletionSoundId
 }
+
+export const completionSoundOptions = [
+  {
+    id: 'task_complete_01',
+    labelKey: 'general.completionSound01',
+    labelEn: 'Light Confirm'
+  },
+  {
+    id: 'task_complete_02',
+    labelKey: 'general.completionSound02',
+    labelEn: 'Soft Notification'
+  },
+  {
+    id: 'task_complete_03',
+    labelKey: 'general.completionSound03',
+    labelEn: 'Sharp Alert'
+  },
+  {
+    id: 'task_complete_04',
+    labelKey: 'general.completionSound04',
+    labelEn: 'Echo Completion'
+  },
+  {
+    id: 'task_complete_05',
+    labelKey: 'general.completionSound05',
+    labelEn: 'Cheerful Success'
+  },
+  {
+    id: 'task_complete_06',
+    labelKey: 'general.completionSound06',
+    labelEn: 'Minimal Ding'
+  }
+] as const satisfies ReadonlyArray<{
+  id: CompletionSoundId
+  labelKey: string
+  labelEn: string
+}>
+
+export const defaultCompletionSound: CompletionSoundId = 'task_complete_06'
 
 export const fontFamilyOptions = [
   {
@@ -85,12 +134,16 @@ export const fontSizeOptions = [
 export const defaultGeneralPreferences: GeneralPreferences = {
   fontFamily: 'microsoft-yahei',
   fontSize: 'md',
-  closeBehavior: 'tray'
+  closeBehavior: 'tray',
+  completionSound: defaultCompletionSound
 }
 
 const fontFamilyIds: ReadonlySet<string> = new Set(fontFamilyOptions.map((o) => o.id))
 const fontSizeIds: ReadonlySet<string> = new Set(fontSizeOptions.map((o) => o.id))
 const closeBehaviors: ReadonlySet<string> = new Set(['tray', 'quit'])
+const completionSoundIds: ReadonlySet<string> = new Set(
+  completionSoundOptions.map((o) => o.id)
+)
 
 export function normalizeGeneralPreferences(raw: unknown): GeneralPreferences {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
@@ -109,7 +162,12 @@ export function normalizeGeneralPreferences(raw: unknown): GeneralPreferences {
     typeof record.closeBehavior === 'string' && closeBehaviors.has(record.closeBehavior)
       ? (record.closeBehavior as CloseBehavior)
       : defaultGeneralPreferences.closeBehavior
-  return { fontFamily, fontSize, closeBehavior }
+  const completionSound =
+    typeof record.completionSound === 'string' &&
+    completionSoundIds.has(record.completionSound)
+      ? (record.completionSound as CompletionSoundId)
+      : defaultGeneralPreferences.completionSound
+  return { fontFamily, fontSize, closeBehavior, completionSound }
 }
 
 export function fontFamilyCss(id: FontFamilyId): string {

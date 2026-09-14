@@ -1,11 +1,14 @@
 import { overviewPages, resolvePageTitle } from '@renderer/routes'
+import { DRAFT_PAGE_ID } from '@renderer/shell/draft-page'
+import { useDraftStore } from '@renderer/shell/draft-store'
 import { useNavigationStore } from '@renderer/shell/navigation-store'
+import { HOME_PAGE_ID } from '@renderer/shell/page-ids'
 import { useLocale, useT } from '@renderer/shell/use-t'
 import { cn } from '@renderer/lib/cn'
 import { CalendarClockIcon, FolderPlusIcon, HomeIcon, type LucideIcon } from 'lucide-react'
 
 const overviewIcons: Record<string, LucideIcon> = {
-  'overview:home': HomeIcon,
+  [HOME_PAGE_ID]: HomeIcon,
   'overview:recent': CalendarClockIcon,
   'overview:starred': FolderPlusIcon
 }
@@ -13,6 +16,7 @@ const overviewIcons: Record<string, LucideIcon> = {
 export function OverviewNav() {
   const sidebarSelectedId = useNavigationStore((state) => state.sidebarSelectedId)
   const openFromSidebar = useNavigationStore((state) => state.openFromSidebar)
+  const openNewProject = useDraftStore((state) => state.openNewProject)
   const t = useT()
   const locale = useLocale()
 
@@ -29,7 +33,10 @@ export function OverviewNav() {
             <button
               key={entry.id}
               type="button"
-              onClick={() => openFromSidebar(entry.id)}
+              onClick={() => {
+                if (entry.id === DRAFT_PAGE_ID) openNewProject()
+                openFromSidebar(entry.id)
+              }}
               className={cn(
                 'flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm outline-none transition-colors',
                 active

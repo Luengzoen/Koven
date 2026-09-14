@@ -1,11 +1,6 @@
 import { displayEntryName } from '@renderer/components/fs-browser/display-name'
 import { EntryIcon } from '@renderer/components/fs-browser/entry-icon'
 import { entryCanDrill } from '@renderer/components/fs-browser/file-browser-types'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '@renderer/components/ui/tooltip'
 import { cn } from '@renderer/lib/cn'
 import { useT } from '@renderer/shell/use-t'
 import {
@@ -90,35 +85,30 @@ export function ColumnPane({
             const pathActive = open && !focused
             const pathLabel = entryTooltipPath(entry, t('fsBrowser.rootThisPc'))
             return (
-              <Tooltip key={entry.path}>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    role="option"
-                    data-entry-path={entry.path}
-                    aria-selected={selected || focused || open}
-                    className={cn(
-                      'flex w-full cursor-pointer items-center gap-2 px-2 py-1.5 text-left text-sm outline-none',
-                      // 暗色下 muted===card，路径链/选中必须用 accent，否则伪选中不可见
-                      focused || selected || pathActive
-                        ? 'bg-accent text-foreground'
-                        : 'text-foreground hover:bg-accent/70',
-                      entry.isHidden && 'opacity-45'
-                    )}
-                    onClick={(event) => onItemClick(entry, event)}
-                    onDoubleClick={() => onActivate(entry)}
-                  >
-                    <EntryIcon entry={entry} open={open} />
-                    <span className="min-w-0 flex-1 truncate">{displayEntryName(entry)}</span>
-                    {entryCanDrill(entry) ? (
-                      <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
-                    ) : null}
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="max-w-sm break-all">
-                  {pathLabel}
-                </TooltipContent>
-              </Tooltip>
+              <button
+                key={entry.path}
+                type="button"
+                role="option"
+                data-entry-path={entry.path}
+                title={pathLabel}
+                aria-selected={selected || focused || open}
+                className={cn(
+                  'flex w-full cursor-pointer items-center gap-2 px-2 py-1.5 text-left text-sm outline-none',
+                  // 暗色下 muted===card，路径链/选中必须用 accent，否则伪选中不可见
+                  focused || selected || pathActive
+                    ? 'bg-accent text-foreground'
+                    : 'text-foreground hover:bg-accent/70',
+                  entry.isHidden && 'opacity-45'
+                )}
+                onClick={(event) => onItemClick(entry, event)}
+                onDoubleClick={() => onActivate(entry)}
+              >
+                <EntryIcon entry={entry} open={open} />
+                <span className="min-w-0 flex-1 truncate">{displayEntryName(entry)}</span>
+                {entryCanDrill(entry) ? (
+                  <ChevronRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
+                ) : null}
+              </button>
             )
           })
         )}

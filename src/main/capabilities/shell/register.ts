@@ -3,6 +3,18 @@ import { ok } from '@shared/kernel/result'
 import { shellIpc, type ShellUiPatch } from '@shared/capabilities/shell'
 import { loadShellSnapshot, patchShellUi } from './snapshot'
 
+let uiReadyListener: (() => void) | null = null
+let uiReadyReceived = false
+
+/** 启动交接订阅；若 uiReady 已先到则立刻回调一次 */
+export function onShellUiReady(listener: () => void): void {
+  if (uiReadyReceived) {
+    listener()
+    return
+  }
+  uiReadyListener = listener
+}
+
 export function registerShell(): void {
   ipcMain.handle(shellIpc.isMaximized, (event) => {
     const maximized = BrowserWindow.fromWebContents(event.sender)?.isMaximized() ?? false
@@ -16,6 +28,14 @@ export function registerShell(): void {
       return ok(loadShellSnapshot())
     }
     return ok(patchShellUi(patch as ShellUiPatch))
+  })
+
+  ipcMain.on(shellIpc.uiReady, () => {
+    if (uiReadyReceived) return
+    uiReadyReceived = true
+    const listener = uiReadyListener
+    uiReadyListener = null
+    listener?.()
   })
 }
 

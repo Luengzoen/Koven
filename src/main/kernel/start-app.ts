@@ -2,8 +2,8 @@ import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { app, Menu } from 'electron'
 import { appLog } from './app-log'
 import { applyIsolatedPaths } from './apply-isolated-paths'
-import { createMainWindow } from './create-main-window'
 import { registerAllIpc } from './register-ipc'
+import { runStartupHandoff } from './startup-handoff'
 import { createTray, markQuitting } from './tray'
 import { watchTitleBarOverlayTheme } from './title-bar-overlay'
 
@@ -26,9 +26,9 @@ export function startApp(): void {
     registerAllIpc()
     watchTitleBarOverlayTheme()
 
-    const mainWindow = createMainWindow()
+    const mainWindow = runStartupHandoff()
     createTray(mainWindow)
-    appLog.info('app', 'main window ready')
+    appLog.info('app', 'main window created')
   })
 
   app.on('window-all-closed', () => {

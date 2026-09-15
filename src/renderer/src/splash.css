@@ -1,0 +1,162 @@
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  cursor: default;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.brand-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
+.brand {
+  font-family: Bahnschrift, sans-serif;
+  font-weight: 700;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  background-image:
+    linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 40%,
+      rgba(255, 255, 255, 0.92) 50%,
+      transparent 60%,
+      transparent 100%
+    ),
+    linear-gradient(180deg, #f4f4f5 0%, #71717a 100%);
+  background-size: 220% 100%, 100% 100%;
+  background-position: 120% 0, 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter:
+    drop-shadow(0 0 10px rgba(244, 244, 245, 0.55))
+    drop-shadow(0 0 24px rgba(161, 161, 170, 0.4))
+    drop-shadow(0 0 40px rgba(113, 113, 122, 0.25));
+  animation: shine-sweep 1.8s linear infinite;
+}
+
+.crt-beam {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  translate: -50% -50%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #ffffff 18%,
+    #f4f4f5 50%,
+    #ffffff 82%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 8px #fff,
+    0 0 18px rgba(244, 244, 245, 0.9),
+    0 0 36px rgba(161, 161, 170, 0.55);
+  clip-path: polygon(0% 50%, 3% 0%, 97% 0%, 100% 50%, 97% 100%, 3% 100%);
+}
+
+@keyframes shine-sweep {
+  0% {
+    background-position: 120% 0, 0 0;
+  }
+  100% {
+    background-position: -120% 0, 0 0;
+  }
+}
+
+/* 经典关电视：压成两头尖亮线 → 缩成亮点 → 消失 */
+html.splash-exit .brand {
+  animation: crt-brand-fade 0.18s ease-in forwards;
+}
+
+html.splash-exit .brand-wrap {
+  animation: crt-flatten 0.22s ease-in forwards;
+}
+
+html.splash-exit .crt-beam {
+  animation:
+    crt-beam-line 0.22s ease-in forwards,
+    crt-beam-point 0.23s ease-in 0.22s forwards;
+}
+
+@keyframes crt-flatten {
+  0% {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  100% {
+    transform: scaleY(0.012) scaleX(1);
+    opacity: 1;
+    filter: brightness(2.4);
+  }
+}
+
+@keyframes crt-beam-line {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+  100% {
+    width: min(280px, 42vw);
+    height: 3px;
+    opacity: 1;
+  }
+}
+
+@keyframes crt-beam-point {
+  0% {
+    width: min(280px, 42vw);
+    height: 3px;
+    opacity: 1;
+  }
+  70% {
+    width: 6px;
+    height: 6px;
+    opacity: 1;
+    border-radius: 50%;
+    clip-path: none;
+  }
+  100% {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    border-radius: 50%;
+    clip-path: none;
+  }
+}
+
+@keyframes crt-brand-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

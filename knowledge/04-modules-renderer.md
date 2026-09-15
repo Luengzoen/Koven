@@ -9,9 +9,11 @@
 | 文件 | 作用 |
 |---|---|
 | `src/renderer/index.html` | 挂 `#root`；CSP；开发入口 `/src/main.tsx` |
+| `src/renderer/splash.html` | 启动 Splash（无 React）；入口 `/src/splash.ts` |
+| `src/renderer/src/splash.ts` / `splash.css` | 「Koven」Bahnschrift 渐变字 + 斜流光；`splash-exit` 关电视 CRT |
 | `src/renderer/src/main.tsx` | `createRoot` + `StrictMode` + `App` |
 | `src/renderer/src/assets/main.css` | Tailwind v4 入口 |
-| `src/renderer/src/app/App.tsx` | 只挂 `AppShell`，禁止堆业务 |
+| `src/renderer/src/app/App.tsx` | hydrate 后挂 `AppShell`；首帧后 `shell.notifyUiReady()` |
 | `src/renderer/src/shell/app-shell.tsx` | 标题栏 + 可折叠侧栏 + 宽度手柄 + topbar + keepalive 主区 |
 | `src/renderer/src/shell/title-bar.tsx` | WCO 自定义标题栏 |
 | `src/renderer/src/shell/page-topbar.tsx` | 页面顶栏：侧栏展开/收起、可选返回（`chrome.showBack`）、居中标题 |
@@ -74,7 +76,7 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 
 ## 4. 当前页面行为
 
-- 启动先 `hydrateSession`（壳快照 + preferences）再挂 `AppShell`；**`hydrateProjects` 后台进行**（超时不挡首屏）。
+- 启动先 `hydrateSession`（壳快照 + preferences）再挂 `AppShell`；**`hydrateProjects` 后台进行**（超时不挡首屏）。`AppReady` 双 `rAF` 后 `notifyUiReady`，供主进程结束 Splash。
 - 默认/恢复：Overview 或上次 `activePageId`；任务已删/已归档则回落首页；侧栏高亮用 `sidebarSelectedId`。
 - 「新建项目」草稿页 **不 keepalive**；任务页 `task:<id>` 可保活。
 - 首条发送须已选工作空间（项目加号草稿除外）；标题=前 15 字，项目名=文件夹名；**同工作空间路径归入已有项目（去重）**；发送后选中对应任务。

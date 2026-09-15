@@ -14,6 +14,9 @@ export const shellApi: ShellAPI = {
       }
     },
     getSnapshot: () => ipcRenderer.invoke(shellIpc.getSnapshot),
-    patchUi: (patch: ShellUiPatch) => ipcRenderer.invoke(shellIpc.patchUi, patch)
+    patchUi: (patch: ShellUiPatch) => ipcRenderer.invoke(shellIpc.patchUi, patch),
+    notifyUiReady: () => {
+      ipcRenderer.send(shellIpc.uiReady)
+    }
   }
 }

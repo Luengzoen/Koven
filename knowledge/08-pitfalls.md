@@ -128,6 +128,12 @@
 - **根因**：对 `.lnk` 路径调 `app.getFileIcon` 往往只拿到快捷方式壳图标。
 - **修复**：`fs-browser:get-file-icon` 先 `shell.readShortcutLink`，再对 `icon` / `target` 取图标；展示名去掉 `.lnk` 后缀。
 
+## 坑 26：启动白屏（内容区白、仅 WCO 三按钮可见）
+
+- **现象**：启动后 1–2 秒白底窗口，右上角已有最小化/最大化/关闭。
+- **根因**：主窗在 `ready-to-show` 就 `show()`，此时 React 壳尚未首绘。
+- **修复**：独立透明 Splash + `startup-handoff`；主窗保持隐藏直至 `ready-to-show` 且 `shell:ui-ready`；先 `main.show()` 再播 Splash CRT 后销毁。勿对 Splash 调 `setTitleBarOverlay`（用 `isSplashWindow` 跳过）。
+
 ## 坑 21：暗色主题下分栏「伪选中」完全看不见
 
 - **现象**：路径链父级（此电脑 / C: 等）逻辑上已是打开态，但行背景与周围一样。

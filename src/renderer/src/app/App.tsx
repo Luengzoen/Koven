@@ -3,11 +3,23 @@ import { hydrateProjects, hydrateSession } from '@renderer/shell/session-persist
 import { useThemeSync } from '@renderer/shell/use-theme-sync'
 import { useEffect, useState } from 'react'
 
+function notifyUiReadyOnce(): void {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.koven?.shell.notifyUiReady?.()
+    })
+  })
+}
+
 function AppReady() {
   useThemeSync()
 
   useEffect(() => {
     void hydrateProjects()
+  }, [])
+
+  useEffect(() => {
+    notifyUiReadyOnce()
   }, [])
 
   return <AppShell />

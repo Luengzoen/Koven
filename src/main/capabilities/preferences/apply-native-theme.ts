@@ -1,5 +1,6 @@
 import { BrowserWindow, nativeTheme } from 'electron'
 import type { ThemePreference } from '@shared/capabilities/preferences'
+import { isSplashWindow } from '../../kernel/splash-windows'
 import { applyTitleBarOverlay } from '../../kernel/title-bar-overlay'
 
 function overlayDarkFromPreference(theme: ThemePreference): boolean {
@@ -13,7 +14,7 @@ export function applyNativeThemeSource(theme: ThemePreference): void {
   nativeTheme.themeSource = theme
   const dark = overlayDarkFromPreference(theme)
   for (const win of BrowserWindow.getAllWindows()) {
-    if (win.isDestroyed()) continue
+    if (win.isDestroyed() || isSplashWindow(win)) continue
     applyTitleBarOverlay(win, dark)
   }
 }

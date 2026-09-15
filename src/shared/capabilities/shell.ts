@@ -4,7 +4,8 @@ export const shellIpc = {
   isMaximized: 'shell:is-maximized',
   maximizedChanged: 'shell:maximized-changed',
   getSnapshot: 'shell:get-snapshot',
-  patchUi: 'shell:patch-ui'
+  patchUi: 'shell:patch-ui',
+  uiReady: 'shell:ui-ready'
 } as const
 
 export type ShellWindowBounds = {
@@ -60,5 +61,7 @@ export type ShellAPI = {
     onMaximizedChange: (callback: (maximized: boolean) => void) => () => void
     getSnapshot: () => Promise<Result<ShellSnapshot>>
     patchUi: (patch: ShellUiPatch) => Promise<Result<ShellSnapshot>>
+    /** 主窗首帧已绘；启动 Splash 交接用（只发一次） */
+    notifyUiReady: () => void
   }
 }

@@ -1,5 +1,5 @@
 import { is } from '@electron-toolkit/utils'
-import { app, BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, nativeTheme, shell } from 'electron'
 import { join } from 'node:path'
 import { emitMaximizedChanged } from '../capabilities/shell/register'
 import {
@@ -10,9 +10,17 @@ import {
   createDefaultShellSnapshot
 } from '../capabilities/shell/snapshot'
 import { bindWindowStatePersistence } from '../capabilities/shell/window-state'
+import { loadPreferences } from '../capabilities/preferences/preferences-store'
 import { resolveAppIconPath } from './app-icon'
 import { handleCloseRequest, markQuitting } from './tray'
 import { applyTitleBarOverlay } from './title-bar-overlay'
+
+function resolveMainBackgroundColor(): string {
+  const theme = loadPreferences().theme
+  const dark =
+    theme === 'dark' || (theme === 'system' && nativeTheme.shouldUseDarkColors)
+  return dark ? '#09090b' : '#fafafa'
+}
 
 export type MainWindowOptions = {
   width?: number
@@ -58,6 +66,7 @@ export function createMainWindow(options: MainWindowOptions = {}): BrowserWindow
     minWidth,
     minHeight,
     show: false,
+    backgroundColor: resolveMainBackgroundColor(),
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
     titleBarOverlay: {
@@ -81,9 +90,7 @@ export function createMainWindow(options: MainWindowOptions = {}): BrowserWindow
     mainWindow.maximize()
   }
 
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
-  })
+  // 显式 show 由 startup-handoff 在 Splash 关电视交接时触发
 
   mainWindow.on('close', (event) => {
     handleCloseRequest(mainWindow, event)
@@ -108,7 +115,6 @@ export function createMainWindow(options: MainWindowOptions = {}): BrowserWindow
 
   if (is.dev && process.env.ELECTRON_RENDERER_URL) {
     void mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
-    mainWindow.webContents.openDevTools({ mode: 'detach' })
   } else {
     void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }

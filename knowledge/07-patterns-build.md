@@ -62,7 +62,7 @@
 
 - main：`externalizeDepsPlugin()`，alias `@shared`
 - preload：**不** externalize 第三方（当前也没有）；alias `@shared`；输出 CJS
-- renderer：`@vitejs/plugin-react` + `@tailwindcss/vite`；alias `@renderer`、`@shared`
+- renderer：`@vitejs/plugin-react` + `@tailwindcss/vite`；alias `@renderer`、`@shared`；`build.rollupOptions.input` 含 `index.html` 与启动 `splash.html`
 
 默认产物目录 `out/`。开发时渲染进程 dev server 在 `http://localhost:5173/`（**无 preload，没有 `window.koven`**）。
 

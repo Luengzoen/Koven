@@ -13,7 +13,7 @@ const api: AppAPI = { ...appInfoApi, ...shellApi, ...preferencesApi, ...fsBrowse
 exposeApi(api)
 ```
 
-`api` 的类型是 `AppAPI`（`src/shared/app-api.ts` 的交集组装）。各包方法在 `src/preload/capabilities/<name>/api.ts`。渲染进程通过 `window.koven.shell.*` / `window.koven.preferences.*` / `window.koven.fsBrowser.*` / `window.koven.projects.*`（项目/任务 CRUD、分页、搜索）等命名空间调用。主题即时同步用 `preferences.applyTheme`（`ipcRenderer.send`，不等待）。
+`api` 的类型是 `AppAPI`（`src/shared/app-api.ts` 的交集组装）。各包方法在 `src/preload/capabilities/<name>/api.ts`。渲染进程通过 `window.koven.shell.*` / `window.koven.preferences.*` / `window.koven.fsBrowser.*` / `window.koven.projects.*`（项目/任务 CRUD、分页、搜索）等命名空间调用。主题即时同步用 `preferences.applyTheme`（`ipcRenderer.send`，不等待）。主窗首帧就绪用 `shell.notifyUiReady`（同样 `send`，启动 Splash 交接）。
 
 ## 2. 允许 / 禁止
 

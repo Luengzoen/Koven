@@ -24,9 +24,12 @@
 
 | 文件 | 作用 |
 |---|---|
-| `kernel/start-app.ts` | `whenReady`、AppUserModelId、快捷键、退出口、启动日志 |
+| `kernel/start-app.ts` | `whenReady`、AppUserModelId、快捷键、退出口、启动日志；调用 `runStartupHandoff` |
 | `kernel/apply-isolated-paths.ts` | `app.setPath` / 不可写弹窗与全量回落 / disk-cache 开关 |
-| `kernel/create-main-window.ts` | 窗口工厂（WCO 自定义标题栏 + 可传尺寸 options） |
+| `kernel/create-main-window.ts` | 窗口工厂（WCO 自定义标题栏 + 可传尺寸 options）；`show: false`，**不**在 `ready-to-show` 自显 |
+| `kernel/create-splash-window.ts` | 启动专用透明无边框 Splash（镂空、alwaysOnTop）；不进快照/托盘 |
+| `kernel/startup-handoff.ts` | Splash → 主窗就绪 → 先 `main.show()` 再 CRT 关电视 → 销毁 Splash |
+| `kernel/splash-windows.ts` | Splash 窗口 id 登记；WCO/主题同步跳过 Splash |
 | `kernel/register-ipc.ts` | 只调用各包 `registerXxx()` |
 | `kernel/storage.ts` | `readJson` / `writeJson`（原子写）→ `getDataRoot()/capabilities/<name>/` |
 | `kernel/atomic-file-write.ts` | Windows 安全替换：`*.tmp` → 备份旧文件 → rename |
@@ -37,9 +40,11 @@
 | `capabilities/preferences/` | 偏好 JSON；load 时 migrate + normalize；写 theme 时同步 `nativeTheme` |
 | `kernel/app-icon.ts` | 解析图标：dev 为 `out/main` 上两级的 `build/koven.ico`；打包托盘为 `resources/koven.ico` |
 | `kernel/tray.ts` | 系统托盘、关闭隐藏到托盘、退出守卫；菜单文案走 `t(locale)`；`refreshTrayMenu` 供语言切换 |
-| `kernel/title-bar-overlay.ts` | WCO 标题栏颜色；可显式传 dark，或读 `shouldUseDarkColors` |
+| `kernel/title-bar-overlay.ts` | WCO 标题栏颜色；可显式传 dark，或读 `shouldUseDarkColors`；跳过 Splash |
 
-窗口默认与最小均为 1024×700；无快照或落盘几何无效时相对主屏工作区居中。`titleBarStyle: 'hidden'` + `titleBarOverlay`（高 30px，右上角保留 Windows 原生最小化/最大化/关闭）；`preload: join(__dirname, '../preload/index.js')`；`contextIsolation: true`；`nodeIntegration: false`；`sandbox: true`；开发态 `icon: build/koven.ico`；外链 `openExternal` + `deny`；开发 `loadURL`，否则 `loadFile`。
+窗口默认与最小均为 1024×700；无快照或落盘几何无效时相对主屏工作区居中。`titleBarStyle: 'hidden'` + `titleBarOverlay`（高 30px，右上角保留 Windows 原生最小化/最大化/关闭）；`preload: join(__dirname, '../preload/index.js')`；`contextIsolation: true`；`nodeIntegration: false`；`sandbox: true`；`backgroundColor` 按偏好明暗（`#fafafa` / `#09090b`）；开发态 `icon: build/koven.ico`；外链 `openExternal` + `deny`；开发 `loadURL`，否则 `loadFile`。
+
+**启动交接**：`runStartupHandoff` 先创建并显示透明 Splash（`splash.html`），再创建主窗（保持隐藏）。门闩为 `ready-to-show` **且** `shell:ui-ready`（渲染首帧），且 Splash 至少约 350ms。满足后先 `main.show()`（仍在 alwaysOnTop Splash 下），再对 Splash 注入 `splash-exit` 播 CRT（约 450ms），最后 `splash.destroy()`。Splash **不是**产品第二扇窗，不走 `createMainWindow` options。
 
 **关闭与托盘**：点窗口关闭钮 → 读 `preferences.general.closeBehavior`（默认 `tray`：`preventDefault` + `hide()`；`quit`：放行关闭并退出）。托盘单击 → 恢复主窗口。托盘菜单「退出 Koven」→ `app.quit()`；「显示主窗口」「设置」暂为占位（disabled）；菜单文案随 `locale` 切换（`preferences:set` 改语言时 `refreshTrayMenu`）。`before-quit` / `query-session-end` 置 `quitting`，此后 close 不再拦截。
 
@@ -56,6 +61,7 @@
 | `shell:maximized-changed` | `shellIpc.maximizedChanged` | main → renderer 推送（非 handle） |
 | `shell:get-snapshot` | `shellIpc.getSnapshot` | 读壳快照 JSON |
 | `shell:patch-ui` | `shellIpc.patchUi` | 合并写导航/侧栏（不改 window，window 由 main 窗口事件写） |
+| `shell:ui-ready` | `shellIpc.uiReady` | 渲染 → main（`send`）：主窗首帧已绘；启动 Splash 交接门闩（只认一次） |
 | `preferences:get` | `preferencesIpc.get` | 读偏好 JSON |
 | `preferences:set` | `preferencesIpc.set` | 合并写 theme/locale/general（只落盘，不改 WCO）；locale 变更时重建托盘菜单 |
 | `preferences:apply-theme` | `preferencesIpc.applyTheme` | 渲染 → main（`send`）：立刻改 themeSource + WCO；主题扩散圆碰到右上角时再调 |

@@ -1,4 +1,5 @@
 import { BrowserWindow, nativeTheme } from 'electron'
+import { isSplashWindow } from './splash-windows'
 
 const overlayColors = {
   dark: { color: '#18181b', symbolColor: '#fafafa' },
@@ -7,6 +8,7 @@ const overlayColors = {
 
 /** @param dark 显式深浅；省略则读 nativeTheme.shouldUseDarkColors */
 export function applyTitleBarOverlay(win: BrowserWindow, dark?: boolean): void {
+  if (win.isDestroyed() || isSplashWindow(win)) return
   const useDark = dark ?? nativeTheme.shouldUseDarkColors
   const palette = useDark ? overlayColors.dark : overlayColors.light
   win.setTitleBarOverlay({
@@ -19,7 +21,7 @@ export function applyTitleBarOverlay(win: BrowserWindow, dark?: boolean): void {
 export function watchTitleBarOverlayTheme(): void {
   nativeTheme.on('updated', () => {
     for (const win of BrowserWindow.getAllWindows()) {
-      if (win.isDestroyed()) continue
+      if (win.isDestroyed() || isSplashWindow(win)) continue
       applyTitleBarOverlay(win)
     }
   })

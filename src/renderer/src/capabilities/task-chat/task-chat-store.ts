@@ -1,10 +1,10 @@
 import { create } from 'zustand'
-import type { ChatMessage } from '@renderer/capabilities/task-chat/mock-stream'
+import type { ChatMessage } from '@renderer/capabilities/task-chat/block-model'
 import {
   createAssistantPlaceholder,
-  createUserMessage,
-  mockStreamAssistant
-} from '@renderer/capabilities/task-chat/mock-stream'
+  createUserMessage
+} from '@renderer/capabilities/task-chat/block-model'
+import { playDemoStream } from '@renderer/capabilities/task-chat/mock/play-demo-stream'
 import { useProjectsStore } from '@renderer/capabilities/projects/projects-store'
 import { playTaskCompleteSoundIfBadgeWouldShow } from '@renderer/shell/play-task-complete-sound'
 
@@ -109,22 +109,15 @@ export const useTaskChatStore = create<TaskChatState>((set, get) => ({
 
     const signal = { cancelled: false }
     try {
-      await mockStreamAssistant({
+      await playDemoStream({
         signal,
-        onThinking: (thinking) => {
+        onBlocks: (blocks) => {
           set((state) => {
             const slice = state.byTaskId[taskId] ?? emptySlice()
             const messages = slice.messages.map((msg) =>
-              msg.id === assistant.id ? { ...msg, thinking } : msg
-            )
-            return { byTaskId: { ...state.byTaskId, [taskId]: { ...slice, messages } } }
-          })
-        },
-        onBody: (content) => {
-          set((state) => {
-            const slice = state.byTaskId[taskId] ?? emptySlice()
-            const messages = slice.messages.map((msg) =>
-              msg.id === assistant.id ? { ...msg, content } : msg
+              msg.id === assistant.id && msg.role === 'assistant'
+                ? { ...msg, blocks }
+                : msg
             )
             return { byTaskId: { ...state.byTaskId, [taskId]: { ...slice, messages } } }
           })
@@ -133,7 +126,9 @@ export const useTaskChatStore = create<TaskChatState>((set, get) => ({
       set((state) => {
         const slice = state.byTaskId[taskId] ?? emptySlice()
         const messages = slice.messages.map((msg) =>
-          msg.id === assistant.id ? { ...msg, streaming: false } : msg
+          msg.id === assistant.id && msg.role === 'assistant'
+            ? { ...msg, streaming: false }
+            : msg
         )
         return {
           byTaskId: {

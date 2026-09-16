@@ -40,7 +40,7 @@
 | `src/renderer/src/capabilities/app-info/` | 关于对话框 |
 | `src/renderer/src/capabilities/new-project/` | 草稿页：hero + Prompt；首发后创建项目/任务并切到任务页 |
 | `src/renderer/src/capabilities/projects/` | `projects-store`（hydrate / 分页 / 搜索） |
-| `src/renderer/src/capabilities/task-chat/` | 任务对话页 + mock 流式 + 忙碌态 composer；流结束置 `finished` 时若非当前任务页则播完成提示音 |
+| `src/renderer/src/capabilities/task-chat/` | 任务对话页 + **积木化 mock 多轮 loop**（思考/正文 Markdown/并行工具含 search_files·grep/终端/skill 子 loop/MCP）+ 忙碌态 composer；流结束置 `finished` 时若非当前任务页则播完成提示音 |
 
 CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）；`connect-src` 含 `ws:`/`wss:`（HMR）。收紧 CSP 时先读 `08-pitfalls.md`。
 
@@ -68,7 +68,7 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 | `capabilities/app-info/` | 关于对话框 |
 | `capabilities/new-project/` | 草稿 + Prompt；项目目录 Popover；流式忙碌时禁用模式/回形针/项目目录/权限 |
 | `capabilities/projects/` | 侧栏数据 store（IPC → SQLite） |
-| `capabilities/task-chat/` | 任务对话页；mock 思考/正文流式；docked composer |
+| `capabilities/task-chat/` | 任务对话页；助手回复为可注册积木流；目录要点：`block-model.ts`、`blocks/`（`block-views` 注册表 + 各积木）、`mock/`（多轮 demo 剧本 + 播放器）；任意发送播同一套合理 loop；围栏壳暂原文、mermaid 运行时未接 |
 
 新增可复用控件放 `components/ui/`；页面与业务组合放 `capabilities/<name>/`。壳导航与侧栏放 `shell/`。规范见 `09-ui-spec.md`、`10-architecture.md`。
 

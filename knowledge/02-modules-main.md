@@ -88,7 +88,7 @@
 - 打开时 `repairProjectIntegrity`：合并同目录未归档项目、删除无未归档任务的空项目、`lower(project_path)` 唯一索引；旧库列名迁移见 `migrate-legacy-columns.ts`（一次性）
 - 实现：`src/main/capabilities/projects/`（`db.ts` / `queries.ts` / `mutations.ts` / `repair.ts` / `project-path.ts` / `migrate-legacy-columns.ts` / `row-utils.ts` / `register.ts`）
 - 用语：**项目** = 侧栏实体；**项目目录** = 磁盘上的根文件夹（字段 `projectPath` / `project_path`）
-- 消息正文本阶段不落库（renderer mock 流式）
+- 消息正文本阶段不落库（renderer 积木化 mock 多轮流式）
 
 ### fs-browser 与 MFT
 

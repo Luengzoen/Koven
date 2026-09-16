@@ -74,7 +74,7 @@ export function TaskChatPage({ taskId }: TaskChatPageProps) {
         <div className="mx-auto w-full max-w-3xl">
           <PromptComposer
             layout="docked"
-            showWorkspace={false}
+            showProjectDirectory={false}
             busy={busy}
             onSend={(text) => {
               void send(taskId, text)

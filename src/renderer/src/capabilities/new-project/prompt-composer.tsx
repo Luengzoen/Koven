@@ -37,10 +37,11 @@ const COMPOSER_MAX_HEIGHT = 500
 
 export type PromptComposerProps = {
   layout?: 'hero' | 'docked'
-  showWorkspace?: boolean
-  requireWorkspace?: boolean
-  workspacePath?: string | null
-  onWorkspaceChange?: (path: string | null) => void
+  /** 是否展示「项目目录」选择（新建项目时需要；已有项目内加任务则否） */
+  showProjectDirectory?: boolean
+  requireProjectDirectory?: boolean
+  projectPath?: string | null
+  onProjectPathChange?: (path: string | null) => void
   busy?: boolean
   onSend?: (text: string) => void | Promise<void>
   className?: string
@@ -62,10 +63,10 @@ function StreamingDots() {
 
 export function PromptComposer({
   layout = 'hero',
-  showWorkspace = true,
-  requireWorkspace = false,
-  workspacePath: workspacePathProp,
-  onWorkspaceChange,
+  showProjectDirectory = true,
+  requireProjectDirectory = false,
+  projectPath: projectPathProp,
+  onProjectPathChange,
   busy = false,
   onSend,
   className
@@ -73,16 +74,16 @@ export function PromptComposer({
   const t = useT()
   const [value, setValue] = useState('')
   const [mode, setMode] = useState<ComposerMode>(defaultComposerMode)
-  const [workspacePathLocal, setWorkspacePathLocal] = useState<string | null>(null)
+  const [projectPathLocal, setProjectPathLocal] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
 
-  const workspacePath = workspacePathProp ?? workspacePathLocal
-  const setWorkspacePath = onWorkspaceChange ?? setWorkspacePathLocal
+  const projectPath = projectPathProp ?? projectPathLocal
+  const setProjectPath = onProjectPathChange ?? setProjectPathLocal
 
   const hasText = value.trim().length > 0
-  const workspaceOk = !requireWorkspace || Boolean(workspacePath)
-  const canSend = hasText && workspaceOk && !busy
+  const projectDirectoryOk = !requireProjectDirectory || Boolean(projectPath)
+  const canSend = hasText && projectDirectoryOk && !busy
   const controlsDisabled = busy
   const ModeIcon = composerModeIcon[mode]
   const modeLabel = t(composerModeLabelKey[mode])
@@ -223,9 +224,9 @@ export function PromptComposer({
       </div>
 
       <ComposerFooter
-        workspacePath={workspacePath}
-        onWorkspaceChange={setWorkspacePath}
-        showWorkspace={showWorkspace}
+        projectPath={projectPath}
+        onProjectPathChange={setProjectPath}
+        showProjectDirectory={showProjectDirectory}
         disabled={controlsDisabled}
       />
     </FocusFrame>

@@ -43,7 +43,7 @@ export function ProjectRow({
       <div className="group flex items-center gap-1 rounded-md py-1 pr-1 pl-2 text-sm text-foreground/80 transition-colors hover:bg-muted">
         <button
           type="button"
-          title={project.workspacePath}
+          title={project.projectPath}
           onClick={onToggle}
           className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left outline-none"
           aria-expanded={expanded}

@@ -21,7 +21,8 @@ export type TaskStatus = 'loading' | 'finished' | 'error' | 'idle'
 export type ProjectRecord = {
   id: string
   name: string
-  workspacePath: string
+  /** 项目在磁盘上的根目录（项目目录） */
+  projectPath: string
   sortOrder: number
   archived: boolean
   createdAt: number
@@ -63,7 +64,7 @@ export type ListTasksResult = {
 }
 
 export type CreateProjectWithTaskInput = {
-  workspacePath: string
+  projectPath: string
   /** 文件夹名；主进程也会再从路径兜底一次 */
   name?: string
   title: string

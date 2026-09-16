@@ -150,7 +150,7 @@
 
 - **现象**：库里同路径出现多个项目；任务删光后空项目还在。源码已有去重/删空，测试也过。
 - **根因**：`package.json` 的 `main` 指向 `out/main/index.js`；`npm run dev` 下**只有主进程文件变更才会重编并重启 Electron**。只改 `src/main` 后若终端已停、或仅渲染 HMR，运行中的仍是旧 `out/main`。
-- **修复**：改主进程后须重新 `npm run dev`（或至少让 electron-vite 重建 main）。打开库时 `repairProjectIntegrity` 合并同路径项目、删除无未归档任务的空项目，并建 `lower(workspace_path)` 唯一索引。
+- **修复**：改主进程后须重新 `npm run dev`（或至少让 electron-vite 重建 main）。打开库时 `repairProjectIntegrity` 合并同目录项目、删除无未归档任务的空项目，并建 `lower(project_path)` 唯一索引。
 
 ## 坑 24：侧栏任务菜单确认气泡闪一下消失 / 重命名无焦点；下拉内试听首次选中并收起
 

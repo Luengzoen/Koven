@@ -27,14 +27,15 @@ describe('projects sqlite', () => {
     rmSync(root, { recursive: true, force: true })
   })
 
-  it('creates project from workspace folder name and paginates tasks', async () => {
+  it('creates project from folder name and paginates tasks', async () => {
     const created = await createProjectWithTask({
-      workspacePath: 'D:\\Workspaces\\DemoFolder',
+      projectPath: 'D:\\Projects\\DemoFolder',
       title: '这是一段超过十五个字的对话开头内容'
     })
     expect(created.ok).toBe(true)
     if (!created.ok) return
     expect(created.value.project.name).toBe('DemoFolder')
+    expect(created.value.project.projectPath).toBe('D:\\Projects\\DemoFolder')
     expect(created.value.task.title).toBe('这是一段超过十五个字的对话开头')
 
     for (let i = 0; i < 12; i += 1) {
@@ -58,16 +59,16 @@ describe('projects sqlite', () => {
     expect(page2.value.hasMore).toBe(false)
   })
 
-  it('reuses existing project for same workspace path', async () => {
+  it('reuses existing project for same project path', async () => {
     const first = await createProjectWithTask({
-      workspacePath: 'D:\\Workspaces\\Shared',
+      projectPath: 'D:\\Projects\\Shared',
       title: '第一次任务内容足够长'
     })
     expect(first.ok).toBe(true)
     if (!first.ok) return
 
     const second = await createProjectWithTask({
-      workspacePath: 'D:\\Workspaces\\Shared\\',
+      projectPath: 'D:\\Projects\\Shared\\',
       title: '第二次任务内容也够长'
     })
     expect(second.ok).toBe(true)
@@ -89,7 +90,7 @@ describe('projects sqlite', () => {
 
   it('removes project when last task is deleted', async () => {
     const created = await createProjectWithTask({
-      workspacePath: 'D:\\Workspaces\\Lonely',
+      projectPath: 'D:\\Projects\\Lonely',
       title: '唯一任务标题足够长'
     })
     expect(created.ok).toBe(true)
@@ -106,9 +107,9 @@ describe('projects sqlite', () => {
     expect(projects.value.some((p) => p.id === created.value.project.id)).toBe(false)
   })
 
-  it('repairs duplicate workspace paths and empty projects on open', async () => {
+  it('repairs duplicate project paths and empty projects on open', async () => {
     const first = await createProjectWithTask({
-      workspacePath: 'D:\\Workspaces\\RepairMe',
+      projectPath: 'D:\\Projects\\RepairMe',
       title: '修复用任务甲足够长'
     })
     expect(first.ok).toBe(true)
@@ -117,18 +118,18 @@ describe('projects sqlite', () => {
     // 绕过去重：先去掉唯一索引再插入脏数据，再关库触发 repair
     const { getProjectsDb } = await import('./db')
     const database = getProjectsDb()
-    database.exec(`DROP INDEX IF EXISTS idx_projects_workspace_active`)
+    database.exec(`DROP INDEX IF EXISTS idx_projects_path_active`)
     const ts = Date.now()
     database
       .prepare(
-        `INSERT INTO projects (id, name, workspace_path, sort_order, archived, created_at, updated_at)
-         VALUES (?, 'RepairMe', 'D:\\Workspaces\\RepairMe', 99, 0, ?, ?)`
+        `INSERT INTO projects (id, name, project_path, sort_order, archived, created_at, updated_at)
+         VALUES (?, 'RepairMe', 'D:\\Projects\\RepairMe', 99, 0, ?, ?)`
       )
       .run('dup-empty', ts, ts)
     database
       .prepare(
-        `INSERT INTO projects (id, name, workspace_path, sort_order, archived, created_at, updated_at)
-         VALUES (?, 'RepairMe', 'D:\\Workspaces\\RepairMe\\', 100, 0, ?, ?)`
+        `INSERT INTO projects (id, name, project_path, sort_order, archived, created_at, updated_at)
+         VALUES (?, 'RepairMe', 'D:\\Projects\\RepairMe\\', 100, 0, ?, ?)`
       )
       .run('dup-with-task', ts, ts)
     database
@@ -152,7 +153,7 @@ describe('projects sqlite', () => {
 
   it('searches projects and tasks with hasMore', async () => {
     const a = await createProjectWithTask({
-      workspacePath: 'D:\\Workspaces\\Alpha',
+      projectPath: 'D:\\Projects\\Alpha',
       title: '搜索关键词甲'
     })
     expect(a.ok).toBe(true)

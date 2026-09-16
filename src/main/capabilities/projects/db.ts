@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { getDataRoot } from '../../env'
 import { appLog } from '../../kernel/app-log'
+import { migrateLegacyProjectColumns } from './migrate-legacy-columns'
 import { repairProjectIntegrity } from './repair'
 
 let db: DatabaseSync | null = null
@@ -18,13 +19,14 @@ function migrate(database: DatabaseSync): void {
     CREATE TABLE IF NOT EXISTS projects (
       id TEXT PRIMARY KEY NOT NULL,
       name TEXT NOT NULL,
-      workspace_path TEXT NOT NULL,
+      project_path TEXT NOT NULL,
       sort_order INTEGER NOT NULL DEFAULT 0,
       archived INTEGER NOT NULL DEFAULT 0,
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL
     );
   `)
+  migrateLegacyProjectColumns(database)
   database.exec(`
     CREATE TABLE IF NOT EXISTS tasks (
       id TEXT PRIMARY KEY NOT NULL,

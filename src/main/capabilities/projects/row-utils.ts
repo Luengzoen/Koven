@@ -39,7 +39,7 @@ export function mapProject(row: SqlRow): ProjectRecord {
   return {
     id: asString(row.id),
     name: asString(row.name),
-    workspacePath: asString(row.workspace_path),
+    projectPath: asString(row.project_path),
     sortOrder: asNumber(row.sort_order),
     archived: asBool(row.archived),
     createdAt: asNumber(row.created_at),

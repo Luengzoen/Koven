@@ -24,18 +24,18 @@ import {
   truncateTitle
 } from './row-utils'
 import {
-  canonicalizeWorkspacePath,
+  canonicalizeProjectPath,
   folderNameFromPath,
-  workspacePathKey
-} from './workspace-path'
+  projectPathKey
+} from './project-path'
 
 export async function createProjectWithTask(
   input: CreateProjectWithTaskInput
 ): Promise<Result<CreateProjectWithTaskResult>> {
   try {
-    const workspacePath = canonicalizeWorkspacePath(input.workspacePath)
-    if (!workspacePath) {
-      return err('projects.invalid-workspace', '请先选择工作空间')
+    const projectPath = canonicalizeProjectPath(input.projectPath)
+    if (!projectPath) {
+      return err('projects.invalid-project-path', '请先选择项目目录')
     }
     const title = truncateTitle(input.title)
     if (!title) {
@@ -43,11 +43,11 @@ export async function createProjectWithTask(
     }
 
     const database = getProjectsDb()
-    const pathKey = workspacePathKey(workspacePath)
+    const pathKey = projectPathKey(projectPath)
     const existingRow = queryAll(
       database,
       `SELECT * FROM projects WHERE archived = 0`
-    ).find((row) => workspacePathKey(asString(row.workspace_path)) === pathKey)
+    ).find((row) => projectPathKey(asString(row.project_path)) === pathKey)
 
     if (existingRow) {
       const project = mapProject(existingRow)
@@ -59,7 +59,7 @@ export async function createProjectWithTask(
     const ts = now()
     const projectId = randomUUID()
     const taskId = randomUUID()
-    const name = (input.name?.trim() || folderNameFromPath(workspacePath)).slice(0, 200)
+    const name = (input.name?.trim() || folderNameFromPath(projectPath)).slice(0, 200)
     const maxOrderRow = queryOne(
       database,
       `SELECT COALESCE(MAX(sort_order), -1) AS max_order FROM projects`
@@ -68,9 +68,9 @@ export async function createProjectWithTask(
 
     runSql(
       database,
-      `INSERT INTO projects (id, name, workspace_path, sort_order, archived, created_at, updated_at)
+      `INSERT INTO projects (id, name, project_path, sort_order, archived, created_at, updated_at)
        VALUES (?, ?, ?, ?, 0, ?, ?)`,
-      [projectId, name, workspacePath, sortOrder, ts, ts]
+      [projectId, name, projectPath, sortOrder, ts, ts]
     )
     runSql(
       database,

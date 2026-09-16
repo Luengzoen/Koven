@@ -1,13 +1,10 @@
 import type { DatabaseSync } from 'node:sqlite'
 import { appLog } from '../../kernel/app-log'
-import {
-  canonicalizeWorkspacePath,
-  workspacePathKey
-} from './workspace-path'
+import { canonicalizeProjectPath, projectPathKey } from './project-path'
 
 type ProjectRow = {
   id: string
-  workspace_path: string
+  project_path: string
   sort_order: number
   created_at: number
 }
@@ -18,23 +15,23 @@ type ProjectRow = {
  */
 export function repairProjectIntegrity(database: DatabaseSync): void {
   const projects = database
-    .prepare(`SELECT id, workspace_path, sort_order, created_at FROM projects WHERE archived = 0`)
+    .prepare(`SELECT id, project_path, sort_order, created_at FROM projects WHERE archived = 0`)
     .all() as ProjectRow[]
 
   // 统一写成规范路径
   for (const project of projects) {
-    const canonical = canonicalizeWorkspacePath(project.workspace_path)
-    if (canonical !== project.workspace_path) {
+    const canonical = canonicalizeProjectPath(project.project_path)
+    if (canonical !== project.project_path) {
       database
-        .prepare(`UPDATE projects SET workspace_path = ? WHERE id = ?`)
+        .prepare(`UPDATE projects SET project_path = ? WHERE id = ?`)
         .run(canonical, project.id)
-      project.workspace_path = canonical
+      project.project_path = canonical
     }
   }
 
   const groups = new Map<string, ProjectRow[]>()
   for (const project of projects) {
-    const key = workspacePathKey(project.workspace_path)
+    const key = projectPathKey(project.project_path)
     const bucket = groups.get(key)
     if (bucket) bucket.push(project)
     else groups.set(key, [project])
@@ -72,14 +69,14 @@ export function repairProjectIntegrity(database: DatabaseSync): void {
 
   try {
     database.exec(`
-      CREATE UNIQUE INDEX IF NOT EXISTS idx_projects_workspace_active
-      ON projects(lower(workspace_path))
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_projects_path_active
+      ON projects(lower(project_path))
       WHERE archived = 0
     `)
   } catch (error) {
     appLog.warn(
       'projects',
-      `unique workspace index skipped: ${error instanceof Error ? error.message : String(error)}`
+      `unique project path index skipped: ${error instanceof Error ? error.message : String(error)}`
     )
   }
 

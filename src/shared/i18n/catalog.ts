@@ -51,9 +51,9 @@ export const messageKeys = [
   'newProject.modeAskHint',
   'newProject.attachFile',
   'newProject.send',
-  'newProject.selectWorkspace',
-  'newProject.workspacePickerTitle',
-  'newProject.workspacePickerHint',
+  'newProject.selectProjectDirectory',
+  'newProject.projectDirectoryPickerTitle',
+  'newProject.projectDirectoryPickerHint',
   'newProject.defaultPermissions',
 
   // B3. fs browser
@@ -207,9 +207,9 @@ const zhCN: Catalog = {
   'newProject.modeAskHint': '只回答问题，不改动文件',
   'newProject.attachFile': '附加文件',
   'newProject.send': '发送',
-  'newProject.selectWorkspace': '选择工作空间',
-  'newProject.workspacePickerTitle': '选择工作空间',
-  'newProject.workspacePickerHint': '从磁盘分栏浏览并选择一个文件夹',
+  'newProject.selectProjectDirectory': '选择项目目录',
+  'newProject.projectDirectoryPickerTitle': '选择项目目录',
+  'newProject.projectDirectoryPickerHint': '从磁盘分栏浏览并选择项目所在文件夹',
   'newProject.defaultPermissions': '默认权限',
 
   'fsBrowser.label': '文件浏览器',
@@ -354,9 +354,9 @@ const en: Catalog = {
   'newProject.modeAskHint': 'Answer questions without changing files',
   'newProject.attachFile': 'Attach file',
   'newProject.send': 'Send',
-  'newProject.selectWorkspace': 'Select workspace',
-  'newProject.workspacePickerTitle': 'Select workspace',
-  'newProject.workspacePickerHint': 'Browse drives in columns and pick a folder',
+  'newProject.selectProjectDirectory': 'Select project folder',
+  'newProject.projectDirectoryPickerTitle': 'Select project folder',
+  'newProject.projectDirectoryPickerHint': 'Browse drives in columns and pick the project folder',
   'newProject.defaultPermissions': 'Default permissions',
 
   'fsBrowser.label': 'File browser',

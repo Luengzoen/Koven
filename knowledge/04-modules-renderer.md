@@ -21,7 +21,7 @@
 | `src/renderer/src/shell/navigation-store.ts` | `activeId` / `sidebarSelectedId` / `backStack` / `openFromSidebar` / `open` / `back` |
 | `src/renderer/src/shell/create-navigation-store.ts` | 导航 store 工厂（含返回栈；不落盘） |
 | `src/renderer/src/shell/keep-alive-outlet.tsx` | 已访问页保活；**草稿页 `overview:starred` 不进 `visitedIds`，单独渲染且离开即毁** |
-| `src/renderer/src/shell/draft-store.ts` / `draft-page.ts` | 新建项目 vs 项目加号草稿（`projectId` 决定是否显示工作空间） |
+| `src/renderer/src/shell/draft-store.ts` / `draft-page.ts` | 新建项目 vs 项目加号草稿（`projectId` 决定是否显示项目目录选择） |
 | `src/renderer/src/shell/session-persistence.ts` | hydrate（含 projects）+ 写回 shell/preferences |
 | `src/renderer/src/shell/preferences-store.ts` | 主题/语言/general（字体族·字号·关闭行为·完成提示音落盘；语言驱动 `useT`） |
 | `src/renderer/src/shell/completion-sound.ts` | 完成提示音单例播放器（同时只播一个） |
@@ -33,7 +33,7 @@
 | `src/renderer/src/shell/apply-typography.ts` | 写 `--font-scale` / `--font-sans-family` |
 | `src/renderer/src/shell/use-theme-sync.ts` | 订阅偏好与系统配色，无动画同步 |
 | `src/renderer/src/components/ui/theme-segment.tsx` | 三档主题 segment（系统/浅/深） |
-| `src/renderer/src/shell/sidebar/` | Overview / 搜索（双模式）/ Projects 树（分页更多、状态显隐、重命名/归档/删除、超长标题悬停滚动、项目路径/任务标题用原生 `title`）/ 底部设置 |
+| `src/renderer/src/shell/sidebar/` | Overview / 搜索（双模式）/ Projects 树（分页更多、状态显隐、重命名/归档/删除、超长标题悬停滚动、项目目录/任务标题用原生 `title`）/ 底部设置 |
 | `src/renderer/src/routes.ts` | Overview + 首选项静态注册；`task:<id>` **动态**解析为 `TaskChatPage` |
 | `src/renderer/src/assets/koven.png` | logo |
 | `src/renderer/src/capabilities/preferences/` | 首选项导航页（General / System；通用含完成提示音下拉+试听；内部分类经壳快照持久化） |
@@ -66,7 +66,7 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 | `lib/cn.ts` | `clsx` + `tailwind-merge` |
 | `capabilities/preferences/` | 首选项导航页（General / System） |
 | `capabilities/app-info/` | 关于对话框 |
-| `capabilities/new-project/` | 草稿 + Prompt；工作空间 Popover；流式忙碌时禁用模式/回形针/工作空间/权限 |
+| `capabilities/new-project/` | 草稿 + Prompt；项目目录 Popover；流式忙碌时禁用模式/回形针/项目目录/权限 |
 | `capabilities/projects/` | 侧栏数据 store（IPC → SQLite） |
 | `capabilities/task-chat/` | 任务对话页；mock 思考/正文流式；docked composer |
 
@@ -79,7 +79,7 @@ CSP：`default-src 'self'`；`style-src` 含 `'unsafe-inline'`（Vite/Radix）�
 - 启动先 `hydrateSession`（壳快照 + preferences）再挂 `AppShell`；**`hydrateProjects` 后台进行**（超时不挡首屏）。`AppReady` 双 `rAF` 后 `notifyUiReady`，供主进程结束 Splash。
 - 默认/恢复：Overview 或上次 `activePageId`；任务已删/已归档则回落首页；侧栏高亮用 `sidebarSelectedId`。
 - 「新建项目」草稿页 **不 keepalive**；任务页 `task:<id>` 可保活。
-- 首条发送须已选工作空间（项目加号草稿除外）；标题=前 15 字，项目名=文件夹名；**同工作空间路径归入已有项目（去重）**；发送后选中对应任务。
+- 首条发送须已选项目目录（项目加号草稿除外）；标题=前 15 字，项目名=文件夹名；**同项目目录归入已有项目（去重）**；发送后选中对应任务。
 - 侧栏：项目全量固定序；任务每页 10 +「更多」；状态徽标仅非当前任务显示；超长任务标题悬停头尾循环滚动；项目/任务悬停用原生 `title`（路径 / 标题）；删光或归档光未归档任务后移除空项目；搜索 debounce + 骨架流光 + 命中高亮 + 搜索结果亦可「更多」。
 - topbar：任务标题订阅 `projects-store`；`preferences` 开返回。
 - 壳 UI 与偏好仍写 JSON；项目/任务写 SQLite。

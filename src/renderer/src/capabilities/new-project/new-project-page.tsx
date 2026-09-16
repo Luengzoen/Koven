@@ -16,7 +16,7 @@ export function NewProjectPage() {
   const upsertProjectAndTask = useProjectsStore((state) => state.upsertProjectAndTask)
   const upsertTask = useProjectsStore((state) => state.upsertTask)
   const queueBootstrap = useTaskChatStore((state) => state.queueBootstrap)
-  const [workspacePath, setWorkspacePath] = useState<string | null>(null)
+  const [projectPath, setProjectPath] = useState<string | null>(null)
   const [leaving, setLeaving] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -44,14 +44,14 @@ export function NewProjectPage() {
         return
       }
 
-      if (!workspacePath) {
+      if (!projectPath) {
         setLeaving(false)
         setSubmitting(false)
         return
       }
 
       const result = await window.koven.projects.createProjectWithTask({
-        workspacePath,
+        projectPath,
         title: text
       })
       if (!result.ok) {
@@ -92,10 +92,10 @@ export function NewProjectPage() {
         </h1>
         <PromptComposer
           layout="hero"
-          showWorkspace={!inProject}
-          requireWorkspace={!inProject}
-          workspacePath={workspacePath}
-          onWorkspaceChange={setWorkspacePath}
+          showProjectDirectory={!inProject}
+          requireProjectDirectory={!inProject}
+          projectPath={projectPath}
+          onProjectPathChange={setProjectPath}
           busy={submitting}
           onSend={handleSend}
         />

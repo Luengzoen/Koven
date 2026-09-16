@@ -121,8 +121,8 @@ npm run publish -- --dry-run       # 只预览选中文件与 tag
 
 - `tsconfig.json` 只有 project references。
 - **禁止 `baseUrl`**（TS 6 弃用，TS 7 删除）。`paths` 写相对本 tsconfig 的路径，例如 `"@shared/*": ["./src/shared/*"]`。
-- node 配置 include：`electron.vite.config.*`、`src/main`、`src/preload`、`src/shared`。
-- web 配置 include：renderer、`src/preload/*.d.ts`、`src/shared`；`jsx: react-jsx`。
+- node 配置 include：`electron.vite.config.*`、`src/main`、`src/preload`、`src/shared`（含 `*.test.ts`，供 IDE / `tsc`）。
+- web 配置 include：renderer、`src/preload/*.d.ts`、`src/shared`（含 `*.test.ts`）；`jsx: react-jsx`。
 
 ## 4. Tailwind CSS v4
 

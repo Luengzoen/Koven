@@ -10,24 +10,24 @@ import type { FsBrowserListEntry } from '@shared/capabilities/fs-browser'
 import { ChevronDownIcon, FolderIcon, XIcon } from 'lucide-react'
 import { useState, type MouseEvent, type PointerEvent } from 'react'
 
-type WorkspacePickerProps = {
+type ProjectPickerProps = {
   value: string | null
   onChange: (path: string | null) => void
   disabled?: boolean
 }
 
-export function WorkspacePickerButton({
+export function ProjectPickerButton({
   value,
   onChange,
   disabled = false
-}: WorkspacePickerProps) {
+}: ProjectPickerProps) {
   const t = useT()
   const [open, setOpen] = useState(false)
   const [draft, setDraft] = useState<FsBrowserListEntry[]>([])
 
   const label = value
     ? value.replace(/[\\/]+$/, '').split(/[\\/]/).pop() || value
-    : t('newProject.selectWorkspace')
+    : t('newProject.selectProjectDirectory')
 
   function handleOpenChange(next: boolean) {
     if (disabled) return
@@ -70,7 +70,7 @@ export function WorkspacePickerButton({
           type="button"
           disabled={disabled}
           className="group inline-flex max-w-[50%] cursor-pointer items-center gap-1.5 rounded-md px-1 py-0.5 text-sm text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-50"
-          aria-label={t('newProject.selectWorkspace')}
+          aria-label={t('newProject.selectProjectDirectory')}
         >
           <FolderIcon className="size-3.5 shrink-0" />
           <span className="min-w-0 truncate">{label}</span>
@@ -102,7 +102,7 @@ export function WorkspacePickerButton({
           */}
           <FileBrowser
             key={value ?? '__empty__'}
-            title={t('newProject.workspacePickerTitle')}
+            title={t('newProject.projectDirectoryPickerTitle')}
             mode="directory"
             maxCount={1}
             showDetail

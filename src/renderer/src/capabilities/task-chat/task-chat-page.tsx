@@ -1,4 +1,5 @@
 import { PromptComposer } from '@renderer/capabilities/new-project/prompt-composer'
+import { BlockList } from '@renderer/capabilities/task-chat/blocks/block-list'
 import { useTaskChatStore } from '@renderer/capabilities/task-chat/task-chat-store'
 import { useProjectsStore } from '@renderer/capabilities/projects/projects-store'
 import { useNavigationStore } from '@renderer/shell/navigation-store'
@@ -48,25 +49,20 @@ export function TaskChatPage({ taskId }: TaskChatPageProps) {
     >
       <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-          {messages.map((message) => (
-            <article
-              key={message.id}
-              className={
-                message.role === 'user'
-                  ? 'ml-auto max-w-[85%] rounded-2xl bg-muted px-4 py-3 text-sm text-foreground'
-                  : 'mr-auto max-w-[85%] space-y-2 text-sm text-foreground'
-              }
-            >
-              {message.role === 'assistant' && message.thinking ? (
-                <p className="rounded-lg border border-border bg-card/60 px-3 py-2 text-muted-foreground">
-                  {message.thinking}
-                </p>
-              ) : null}
-              {message.content ? (
+          {messages.map((message) =>
+            message.role === 'user' ? (
+              <article
+                key={message.id}
+                className="ml-auto max-w-[85%] rounded-2xl bg-muted px-4 py-3 text-sm text-foreground select-text"
+              >
                 <p className="whitespace-pre-wrap leading-6">{message.content}</p>
-              ) : null}
-            </article>
-          ))}
+              </article>
+            ) : (
+              <article key={message.id} className="mr-auto w-full select-text">
+                <BlockList blocks={message.blocks} />
+              </article>
+            )
+          )}
         </div>
       </div>
 

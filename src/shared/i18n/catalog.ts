@@ -147,6 +147,19 @@ export const messageKeys = [
   'common.search',
   'common.clear',
 
+  // G2. task chat blocks
+  'chat.block.thinking',
+  'chat.block.thinkingRunning',
+  'chat.block.thinkingDone',
+  'chat.block.toolRunning',
+  'chat.block.toolDone',
+  'chat.block.shellRunning',
+  'chat.block.shellDone',
+  'chat.block.skillRunning',
+  'chat.block.skillDone',
+  'chat.block.mcpRunning',
+  'chat.block.mcpDone',
+
   // H. main
   'tray.showMainWindow',
   'tray.settings',
@@ -297,6 +310,18 @@ const zhCN: Catalog = {
   'common.search': '搜索',
   'common.clear': '清除',
 
+  'chat.block.thinking': '思考',
+  'chat.block.thinkingRunning': '思考中',
+  'chat.block.thinkingDone': '思考完成',
+  'chat.block.toolRunning': '执行中',
+  'chat.block.toolDone': '已完成',
+  'chat.block.shellRunning': '执行中',
+  'chat.block.shellDone': '已完成',
+  'chat.block.skillRunning': '执行中',
+  'chat.block.skillDone': '已完成',
+  'chat.block.mcpRunning': '执行中',
+  'chat.block.mcpDone': '已完成',
+
   'tray.showMainWindow': '显示主窗口',
   'tray.settings': '设置',
   'tray.quit': '退出 Koven',
@@ -443,6 +468,18 @@ const en: Catalog = {
   'common.ok': 'OK',
   'common.search': 'Search',
   'common.clear': 'Clear',
+
+  'chat.block.thinking': 'Thinking',
+  'chat.block.thinkingRunning': 'Thinking',
+  'chat.block.thinkingDone': 'Thought complete',
+  'chat.block.toolRunning': 'Running',
+  'chat.block.toolDone': 'Done',
+  'chat.block.shellRunning': 'Running',
+  'chat.block.shellDone': 'Done',
+  'chat.block.skillRunning': 'Running',
+  'chat.block.skillDone': 'Done',
+  'chat.block.mcpRunning': 'Running',
+  'chat.block.mcpDone': 'Done',
 
   'tray.showMainWindow': 'Show main window',
   'tray.settings': 'Settings',
